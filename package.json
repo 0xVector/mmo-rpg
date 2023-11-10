@@ -7,5 +7,12 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "excalibur": "^0.28.1"
+  },
+  "scripts": {
+    "build": "bun build ./src/client/src/game.ts --outdir=src/client/out",
+    "client": "bun run ./src/client/serve.ts"
   }
 }
