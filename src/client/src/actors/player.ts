@@ -35,12 +35,12 @@ const spriteSheet = SpriteSheet.fromImageSource({
   grid: {
     rows: 6,
     columns: 6,
-    spriteWidth: 13,
+    spriteWidth: 15,
     spriteHeight: 23, // 21
   },
   spacing: {
-    originOffset: { x: 18, y: 20 }, // y: 22
-    margin: { x: 35, y: 25 },
+    originOffset: { x: 17, y: 20 }, // y: 22
+    margin: { x: 33, y: 25 },
   },
 });
 
