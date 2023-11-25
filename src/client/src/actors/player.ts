@@ -2,10 +2,12 @@ import {
   Actor,
   Animation,
   AnimationStrategy,
+  CollisionType,
   Color,
   Direction,
   Engine,
   Keys,
+  Shape,
   Sprite,
   SpriteSheet,
   Vector,
@@ -30,45 +32,92 @@ const sprite = new Sprite({
     height: 22 * PLAYER_SIZE,
   },
 });
-const spriteSheet = SpriteSheet.fromImageSource({
-  image: images.playerImage,
-  grid: {
-    rows: 6,
-    columns: 6,
-    spriteWidth: 15,
-    spriteHeight: 23, // 21
-  },
-  spacing: {
-    originOffset: { x: 17, y: 20 }, // y: 22
-    margin: { x: 33, y: 25 },
-  },
-});
 
 export class Player extends Actor {
   public facing: "up" | "down" | "left" | "right";
   public isRunning: boolean;
 
-  constructor() {
+  constructor(x: number, y: number) {
     super({
-      x: 200,
-      y: 200,
-      color: Color.Red,
+      x: x,
+      y: y,
+      width: 15*PLAYER_SIZE,
+      height: 23*PLAYER_SIZE,
+      collisionType: CollisionType.Active,
+      collider: Shape.Box(10*PLAYER_SIZE, 3*PLAYER_SIZE, vec(.5, .5), vec(0, 8*PLAYER_SIZE)),
     });
     this.facing = "down";
     this.isRunning = false;
   }
 
   public onInitialize(engine: Engine) {
+    const spriteSheet = SpriteSheet.fromImageSource({
+      image: images.playerImage,
+      grid: {
+        rows: 6,
+        columns: 6,
+        spriteWidth: 15,
+        spriteHeight: 23, // 21
+      },
+      spacing: {
+        originOffset: { x: 17, y: 20 }, // y: 22
+        margin: { x: 33, y: 25 },
+      },
+    });
+    for (let sprite of spriteSheet.sprites) {
+      sprite.destSize = {height: 23*PLAYER_SIZE, width: 15*PLAYER_SIZE};
+    }
+
     // Animations
-    const idleDownAnim = Animation.fromSpriteSheet(spriteSheet, range(0, 5), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const idleUpAnim = Animation.fromSpriteSheet(spriteSheet, range(12, 17), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const idleRightAnim = Animation.fromSpriteSheet(spriteSheet, range(6, 11), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const idleLeftAnim = Animation.fromSpriteSheet(spriteSheet, range(6, 11), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
+    const idleDownAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(0, 5),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop,
+    );
+    const idleUpAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(12, 17),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
+    const idleRightAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(6, 11),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
+    const idleLeftAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(6, 11),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
     idleLeftAnim.flipHorizontal = true;
-    const runDownAnim = Animation.fromSpriteSheet(spriteSheet, range(18, 23), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const runUpAnim = Animation.fromSpriteSheet(spriteSheet, range(30, 35), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const runRightAnim = Animation.fromSpriteSheet(spriteSheet, range(24, 29), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
-    const runLeftAnim = Animation.fromSpriteSheet(spriteSheet, range(24, 29), PLAYER_ANIMATION_SPEED, AnimationStrategy.Loop);
+    const runDownAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(18, 23),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
+    const runUpAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(30, 35),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
+    const runRightAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(24, 29),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
+    const runLeftAnim = Animation.fromSpriteSheet(
+      spriteSheet,
+      range(24, 29),
+      PLAYER_ANIMATION_SPEED,
+      AnimationStrategy.Loop
+    );
     runLeftAnim.flipHorizontal = true;
 
     this.graphics.add("idle-down", idleDownAnim);
@@ -79,11 +128,11 @@ export class Player extends Actor {
     this.graphics.add("run-up", runUpAnim);
     this.graphics.add("run-right", runRightAnim);
     this.graphics.add("run-left", runLeftAnim);
-    
+
     this.graphics.use("idle-down");
+    this.z = 100;
 
     console.log("Player spawned");
-    this.scale = vec(PLAYER_SIZE, PLAYER_SIZE);
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {
@@ -91,7 +140,12 @@ export class Player extends Actor {
     const key = engine.input.keyboard;
 
     let targetVel = Vector.Zero;
-    if (key.isHeld(Keys.A) || key.isHeld(Keys.D) || key.isHeld(Keys.W) || key.isHeld(Keys.S)) {
+    if (
+      key.isHeld(Keys.A) ||
+      key.isHeld(Keys.D) ||
+      key.isHeld(Keys.W) ||
+      key.isHeld(Keys.S)
+    ) {
       this.isRunning = true;
       if (key.isHeld(Keys.W)) {
         this.facing = "up";

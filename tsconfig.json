@@ -1,5 +1,5 @@
 {
-  "include":  ["src/client/**/*", "src/client/src/actors/player.ts", "src/client/src/resources.ts", "src/client/src/game.ts"],
+  "include":  ["src/client/**/*"],
   "compilerOptions": {
     "lib": ["ESNext"],
     "module": "esnext",
