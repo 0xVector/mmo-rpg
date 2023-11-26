@@ -7,7 +7,6 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "bun run --watch src/main.ts",
-
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start -e bun",
@@ -25,6 +24,9 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-socket.io": "^10.2.10",
+    "@nestjs/platform-ws": "^10.2.10",
+    "@nestjs/websockets": "^10.2.10",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
