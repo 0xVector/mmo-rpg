@@ -12,7 +12,7 @@
     "excalibur": "^0.28.1"
   },
   "scripts": {
-    "build": "bun build ./src/client/src/game.ts --outdir=src/client/out",
-    "client": "bun run ./src/client/serve.ts"
+    "build": "bun build ./client/src/game.ts --outdir=src/client/out",
+    "client": "bun run ./client/serve.ts"
   }
 }
