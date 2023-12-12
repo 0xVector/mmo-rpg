@@ -15,6 +15,7 @@ import {
   vec,
 } from "excalibur";
 import { images } from "../resources";
+import { WSManager } from "../websockets";
 
 const PLAYER_SIZE = 5;
 const PLAYER_ANIMATION_SPEED = 200;
@@ -36,8 +37,9 @@ const sprite = new Sprite({
 export class Player extends Actor {
   public facing: "up" | "down" | "left" | "right";
   public isRunning: boolean;
+  private wsManager: WSManager;
 
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, wsManager: WSManager) {
     super({
       x: x,
       y: y,
@@ -48,6 +50,7 @@ export class Player extends Actor {
     });
     this.facing = "down";
     this.isRunning = false;
+    this.wsManager = wsManager;
   }
 
   public onInitialize(engine: Engine) {
@@ -177,6 +180,8 @@ export class Player extends Actor {
     super.update(engine, delta);
     if (this.isRunning) this.graphics.use(`run-${this.facing}`);
     else this.graphics.use(`idle-${this.facing}`);
+
+    this.wsManager.send("playerUpdate", {x: this.pos.x, y: this.pos.y});
   }
 
   private easeOutQuint(x: number): number {

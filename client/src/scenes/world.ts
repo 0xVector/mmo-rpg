@@ -2,10 +2,18 @@ import { Engine, IsometricMap, Scene, Sprite } from "excalibur";
 import { Player } from "../actors/player";
 import { Item } from "../actors/item";
 import { images } from "../resources";
+import { WSManager } from "../websockets";
 
 export class WorldScene extends Scene {
+    private wsManager: WSManager;
+
+    constructor(wsManager: WSManager) {
+        super();
+        this.wsManager = wsManager;
+    }
+
     public onInitialize(_engine: Engine): void {
-        const player = new Player(200, 200);
+        const player = new Player(200, 200, this.wsManager);
         this.add(player);
         this.add(new Item(100, 100));
         this.add(new Item(400, 300));
