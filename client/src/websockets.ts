@@ -14,9 +14,7 @@ export class WSManager {
     };
 
     this.socket.onmessage = (message) => {
-      const rawData = JSON.parse(String(message.data));
-      const event = rawData.event;
-      const data = rawData.data;
+      const {event, data} = JSON.parse(String(message.data));
       const handler = this.handlers.get(event) ?? (() => {});
       handler(data);
     };

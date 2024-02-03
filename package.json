@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "bun build ./client/src/game.ts --outdir=client/out",
-    "client": "bun run ./client/serve.ts"
+    "client": "bun run ./client/serve.ts",
+    "dev": "bun run build && bun run client"
   }
 }
