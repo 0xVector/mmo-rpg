@@ -20,6 +20,7 @@ export class ServerService {
     client.player = player;
 
     this.clients.set(client.id, client);
+    this.updateClient(client);
     console.log(`Client ${client.id}, ${client.player.name} joined`);
     return client.id;
   }
@@ -27,7 +28,7 @@ export class ServerService {
   public removeClient(id: string): void {
     this.clients.delete(id);
     this.eventEmitter.emit("player.despawn", { id });
-    console.log(`Client ${id}, ${this.clients[id].player.name} left`);
+    console.log(`Client ${id} left`);
   }
 
   public receiveHeartbeat(id: string): void {
@@ -62,7 +63,7 @@ export class ServerService {
   private checkHeartbeats(): void {
     const now = Date.now();
     this.clients.forEach((client) => {
-      if (now - client.lastHeartbeat > 100000) {
+      if (now - client.lastHeartbeat > 3000) {
         this.removeClient(client.id);
       }
     });
@@ -70,6 +71,17 @@ export class ServerService {
 
   @Interval(1000)
   private heartbeat(): void {
-    this.broadcast("heartbeat", {});
+    this.clients.forEach((client) => {
+      this.sendTo(client, "heartbeat", { id: client.id });
+    });
+  }
+
+  private updateClient(client: Client): void {
+    this.clients.forEach((otherClient) => {
+      if (otherClient.id !== client.id) {
+        const player = otherClient.player;
+        this.sendTo(client, "player-spawn", { id: player.id, x: player.x, y: player.y });
+      }
+    });
   }
 }

@@ -37,6 +37,11 @@ export class CoreGateway {
     console.log("Disconnected");
   }
 
+  @SubscribeMessage("heartbeat")
+  handleMessage(@MessageBody() data: HeartbeatDto): void {
+    this.coreService.receiveHeartbeat(data.id);
+  }
+
   @SubscribeMessage("join")
   handleJoin(
     @MessageBody() data: JoinDto,
@@ -52,17 +57,12 @@ export class CoreGateway {
   @SubscribeMessage("leave")
   handleLeave(@MessageBody() data: LeaveDto) {
     this.coreService.leaveClient(data.id);
-    return { event: "leave" };
+    return { event: "leave", data: { id: data.id } };
   }
 
   @SubscribeMessage("spawn")
   handleSpawn(@MessageBody() data: SpawnDto) {
     this.coreService.spawnPlayer(data.id);
-  }
-
-  @SubscribeMessage("heartbeat")
-  handleMessage(@MessageBody() data: HeartbeatDto): void {
-    this.coreService.receiveHeartbeat(data.id);
   }
 
   @SubscribeMessage("player-move")

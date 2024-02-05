@@ -9,7 +9,7 @@ export class Client {
 
     constructor(socket: WebSocket) {
         this.socket = socket;
-        this.id = "id"; //uuid(); TODO
+        this.id = uuid();
         this.lastHeartbeat = Date.now();
     }
 

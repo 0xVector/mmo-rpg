@@ -1,6 +1,7 @@
 import { Engine, Scene } from "excalibur";
 import { WSManager } from "./websockets";
 import {
+  HeartbeatEvent,
   JoinEvent,
   LeaveEvent,
   PlayerDespawnEvent,
@@ -32,12 +33,11 @@ export class GameManager {
   }
 
   public onLoaded() {
-    console.log({ id: this.uuid });
     this.ws.send("spawn", { id: this.uuid })
-    console.log("Loaded!");
   }
 
   private registerHandlers() {
+    this.ws.registerHandler("heartbeat", this.replyHeartbeat.bind(this));
     this.ws.registerHandler("join", this.handleJoin.bind(this));
     this.ws.registerHandler("leave", this.handleLeave.bind(this));
     this.ws.registerHandler("player-spawn", this.handlePlayerSpawn.bind(this));
@@ -45,9 +45,12 @@ export class GameManager {
     this.ws.registerHandler("player-move", this.handlePlayerMove.bind(this));
   }
 
+  private replyHeartbeat(data: HeartbeatEvent) {
+    this.ws.send("heartbeat", { id: data.id });
+  }
+
   private handleJoin(data: JoinEvent) {
     this.uuid = data.id;
-    console.log("Joined!");
   }
 
   private handleLeave(data: LeaveEvent) {
@@ -56,7 +59,6 @@ export class GameManager {
 
   private handlePlayerSpawn(data: PlayerSpawnEvent) {
     let player: Player;
-    console.log(data.id, this.uuid)
     if (data.id === this.uuid) {
       player = new PlayerOwn(data.id, 200, 200, this.ws);
       this.ownPlayer = player as PlayerOwn;
@@ -67,7 +69,6 @@ export class GameManager {
 
     this.players.set(player.uuid, player);
     this.mainScene.add(player);
-    console.log("Player spawned!")
   }
 
   private handlePlayerDespawn(data: PlayerDespawnEvent) {

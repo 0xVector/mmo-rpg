@@ -14,7 +14,6 @@ export class PlayerOwn extends Player {
 
   public onInitialize(engine: Engine) {
     super.onInitialize(engine);
-    console.log("PlayerOwn initialized");
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {
@@ -46,8 +45,6 @@ export class PlayerOwn extends Player {
 
     targetVel.size = targetVel.size > 0 ? MAX_SPEED : 0;
     this.vel = targetVel;
-
-    // console.log(this.vel, targetVel);
   }
 
   public update(engine: Engine, delta: number): void {
