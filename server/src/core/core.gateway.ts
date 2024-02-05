@@ -1,8 +1,20 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer
+} from "@nestjs/websockets";
 import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { UsePipes, ValidationPipe } from "@nestjs/common";
 import { CoreService } from "./core.service";
-import { HeartbeatDto, JoinDto, JoinResponseDto } from "./core.gateway.dto";
+import {
+  HeartbeatDto,
+  JoinDto,
+  LeaveDto,
+  PlayerMoveDto,
+  SpawnDto
+} from "./core.gateway.dto";
 
 @WebSocketGateway({
   transports: ["websocket"]
@@ -10,7 +22,7 @@ import { HeartbeatDto, JoinDto, JoinResponseDto } from "./core.gateway.dto";
   //   origin: '*',
   // },
 })
-@UsePipes(ValidationPipe)
+@UsePipes(new ValidationPipe({ transform: true }))
 export class CoreGateway {
   @WebSocketServer()
   server: WSServer;
@@ -26,13 +38,26 @@ export class CoreGateway {
   }
 
   @SubscribeMessage("join")
-  handleJoin(@MessageBody() data: JoinDto, @ConnectedSocket() socket: WebSocket): { event: "join"; data: JoinResponseDto } {
-    console.log(`Player ${data.playerName} joined`);
-
+  handleJoin(
+    @MessageBody() data: JoinDto,
+    @ConnectedSocket() socket: WebSocket
+  ) {
+    const id = this.coreService.joinClient(socket, data.playerName);
     return {
       event: "join",
-      data: { id: this.coreService.registerClient(socket, data.playerName) }
+      data: { id: id }
     };
+  }
+
+  @SubscribeMessage("leave")
+  handleLeave(@MessageBody() data: LeaveDto) {
+    this.coreService.leaveClient(data.id);
+    return { event: "leave" };
+  }
+
+  @SubscribeMessage("spawn")
+  handleSpawn(@MessageBody() data: SpawnDto) {
+    this.coreService.spawnPlayer(data.id);
   }
 
   @SubscribeMessage("heartbeat")
@@ -40,8 +65,8 @@ export class CoreGateway {
     this.coreService.receiveHeartbeat(data.id);
   }
 
-  @SubscribeMessage("playerUpdate")
-  handlePlayerUpdate(@MessageBody() data: any): void {
-    console.log("playerUpdate", data);
+  @SubscribeMessage("player-move")
+  handlePlayerUpdate(@MessageBody() data: PlayerMoveDto): void {
+    this.coreService.movePlayer(data);
   }
 }

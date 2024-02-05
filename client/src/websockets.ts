@@ -1,14 +1,9 @@
 export class WSManager {
-  public id: string | undefined;
   private socket: WebSocket;
   private handlers: Map<string, Function> = new Map();
 
   constructor() {
     this.socket = new WebSocket("ws://localhost:3000");
-    this.registerHandler("join", (data: any) => {
-      this.id = data.id;
-    });
-
     this.socket.onopen = () => {
       console.log("Connected");
     };
@@ -29,7 +24,6 @@ export class WSManager {
   }
 
   public send(event: string, data: any): void {
-    data.id = this.id;
     this.socket.send(JSON.stringify({ event: event, data: data }));
   }
 

@@ -1,5 +1,5 @@
 {
-  "include":  ["client/**/*"],
+  "include": ["client/**/*"],
   "compilerOptions": {
     "lib": ["ESNext"],
     "module": "esnext",
@@ -10,15 +10,14 @@
     "noEmit": true,
     "composite": true,
     "strict": true,
+    "strictPropertyInitialization": false, // bcs for some reason it's required here but not in server
     "downlevelIteration": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "types": [
-      "bun-types" // add Bun global
-    ],
+    "types": ["bun-types"],
     "baseUrl": "./src"
   }
 }

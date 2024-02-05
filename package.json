@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "excalibur": "^0.28.1"
+    "excalibur": "0.29.0-alpha.835"
   },
   "scripts": {
     "build": "bun build ./client/src/game.ts --outdir=client/out",

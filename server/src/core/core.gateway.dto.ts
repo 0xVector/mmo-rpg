@@ -1,12 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-abstract class BaseMessageDto {
-    @IsString()
-    @IsNotEmpty()
-    id: string;
-}
-
-abstract class BaseMessageResponseDto {
+class BaseDto {
     @IsString()
     @IsNotEmpty()
     id: string;
@@ -18,13 +12,17 @@ export class JoinDto {
     playerName: string;
 }
 
-export class JoinResponseDto extends BaseMessageResponseDto {
-}
+export class JoinResponseDto extends BaseDto {}
 
-export class HeartbeatDto extends BaseMessageDto {
-}
+export class LeaveDto extends BaseDto {}
 
-export class PlayerUpdateDto extends BaseMessageDto {
+export class HeartbeatDto extends BaseDto {}
+
+export class SpawnDto extends BaseDto {}
+
+export class PlayerUpdateDto extends BaseDto {}
+
+export class PlayerMoveDto extends PlayerUpdateDto {
     @IsNumber()
     x: number;
 
