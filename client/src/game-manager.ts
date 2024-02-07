@@ -6,7 +6,8 @@ import {
   LeaveEvent,
   PlayerDespawnEvent,
   PlayerMoveEvent,
-  PlayerSpawnEvent
+  PlayerSpawnEvent,
+  PlayerUpdateEvent
 } from "./events";
 import { Player } from "./actors/player/player";
 import { PlayerOwn } from "./actors/player/player-own";
@@ -43,6 +44,7 @@ export class GameManager {
     this.ws.registerHandler("player-spawn", this.handlePlayerSpawn.bind(this));
     this.ws.registerHandler("player-despawn", this.handlePlayerDespawn.bind(this));
     this.ws.registerHandler("player-move", this.handlePlayerMove.bind(this));
+    this.ws.registerHandler("player-update", this.handlePlayerUpdate.bind(this));
   }
 
   private replyHeartbeat(data: HeartbeatEvent) {
@@ -83,6 +85,14 @@ export class GameManager {
     const player = this.players.get(data.id);
     if (player && player !== this.ownPlayer) {
       player.move(data.x, data.y);
+    }
+  }
+
+  private handlePlayerUpdate(data: PlayerUpdateEvent) {
+    const player = this.players.get(data.id);
+    if (player && player !== this.ownPlayer) {
+      player.facing = data.facing;
+      player.isRunning = data.isRunning;
     }
   }
 }

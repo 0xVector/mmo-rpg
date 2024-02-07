@@ -3,6 +3,8 @@ export class Player {
     public name: string;
     public x: number;
     public y: number;
+    public facing: "up" | "down" | "left" | "right" = "down";
+    public isRunning: boolean = false;
 
     constructor(id: string, name: string, x: number = 0, y: number = 0) {
         this.id = id;

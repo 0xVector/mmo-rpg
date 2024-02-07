@@ -3,13 +3,13 @@ import { WSManager } from "../../websockets";
 import { Player } from "./player";
 
 export class PlayerOwn extends Player {
-  private lastX: number;
-  private lastY: number;
+  private lastXY: { x: number; y: number };
+  private lastState: { facing: "up" | "down" | "left" | "right"; isRunning: boolean };
 
   constructor(uuid: string, x: number, y: number, wsManager: WSManager) {
     super(uuid, x, y, wsManager);
-    this.lastX = x;
-    this.lastY = y;
+    this.lastXY = { x: x, y: y };
+    this.lastState = { facing: "down", isRunning: false };
   }
 
   public onInitialize(engine: Engine) {
@@ -49,11 +49,14 @@ export class PlayerOwn extends Player {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
-    if (this.pos.x !== this.lastX || this.pos.y !== this.lastY) {
+    if (this.pos.x != this.lastXY.x || this.pos.y != this.lastXY.y) {
       this.wsManager.send("player-move", { id: this.uuid, x: this.pos.x, y: this.pos.y });
     }
-    this.lastX = this.pos.x;
-    this.lastY = this.pos.y;
+    if (this.facing != this.lastState.facing || this.isRunning != this.lastState.isRunning) {
+      this.wsManager.send("player-update", { id: this.uuid, facing: this.facing, isRunning: this.isRunning });
+    }
+    this.lastXY = { x: this.pos.x, y: this.pos.y };
+    this.lastState = { facing: this.facing, isRunning: this.isRunning };
   }
 
   private easeOutQuint(x: number): number {

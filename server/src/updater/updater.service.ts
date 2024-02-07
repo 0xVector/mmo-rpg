@@ -3,7 +3,8 @@ import { OnEvent } from "@nestjs/event-emitter";
 import {
   PlayerSpawnEvent,
   PlayerDespawnEvent,
-  PlayerMoveEvent
+  PlayerMoveEvent,
+  PlayerUpdateEvent
 } from "server/server.event";
 import { ServerService } from "server/server.service";
 
@@ -35,6 +36,15 @@ export class UpdaterService {
       id: event.id,
       x: event.x,
       y: event.y
+    });
+  }
+
+  @OnEvent("player.update")
+  playerUpdated(event: PlayerUpdateEvent) {
+    this.server.broadcast("player-update", {
+      id: event.id,
+      facing: event.facing,
+      isRunning: event.isRunning
     });
   }
 }

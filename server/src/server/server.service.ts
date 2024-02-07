@@ -49,6 +49,14 @@ export class ServerService {
     this.eventEmitter.emit("player.move", { id, x, y });
   }
 
+  public updatePlayer(id: string, facing: "up" | "down" | "left" | "right", isRunning: boolean): void {
+    if (!this.clients.has(id)) return;
+    const player = this.clients.get(id).player;
+    player.facing = facing;
+    player.isRunning = isRunning;
+    this.eventEmitter.emit("player.update", { id, facing, isRunning });
+  }
+
   public broadcast(event: string, data: any): void {
     this.clients.forEach((client) => {
       this.sendTo(client, event, data);

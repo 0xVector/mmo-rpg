@@ -13,6 +13,7 @@ import {
   JoinDto,
   LeaveDto,
   PlayerMoveDto,
+  PlayerUpdateDto,
   SpawnDto
 } from "./core.gateway.dto";
 
@@ -66,7 +67,12 @@ export class CoreGateway {
   }
 
   @SubscribeMessage("player-move")
-  handlePlayerUpdate(@MessageBody() data: PlayerMoveDto): void {
-    this.coreService.movePlayer(data);
+  handlePlayerMove(@MessageBody() data: PlayerMoveDto): void {
+    this.coreService.movePlayer(data.id, data.x, data.y);
+  }
+
+  @SubscribeMessage("player-update")
+  handlePlayerUpdate(@MessageBody() data: PlayerUpdateDto): void {
+    this.coreService.updatePlayer(data);
   }
 }

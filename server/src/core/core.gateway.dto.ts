@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 class BaseDto {
     @IsString()
@@ -20,12 +20,18 @@ export class HeartbeatDto extends BaseDto {}
 
 export class SpawnDto extends BaseDto {}
 
-export class PlayerUpdateDto extends BaseDto {}
-
-export class PlayerMoveDto extends PlayerUpdateDto {
+export class PlayerMoveDto extends BaseDto {
     @IsNumber()
     x: number;
 
     @IsNumber()
     y: number;
+}
+
+export class PlayerUpdateDto extends BaseDto {
+    @IsIn(["up", "down", "left", "right"])
+    facing: "up" | "down" | "left" | "right";
+
+    @IsBoolean()
+    isRunning: boolean;
 }
