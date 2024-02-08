@@ -66,12 +66,12 @@ export class CoreGateway {
     this.coreService.spawnPlayer(data.id);
   }
 
-  @SubscribeMessage("player-move")
+  @SubscribeMessage("move")
   handlePlayerMove(@MessageBody() data: PlayerMoveDto): void {
     this.coreService.movePlayer(data.id, data.x, data.y);
   }
 
-  @SubscribeMessage("player-update")
+  @SubscribeMessage("update")
   handlePlayerUpdate(@MessageBody() data: PlayerUpdateDto): void {
     this.coreService.updatePlayer(data);
   }

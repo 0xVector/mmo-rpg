@@ -1,5 +1,5 @@
 import { Engine, Actor, Sprite, vec, CollisionType } from "excalibur";
-import { images } from "../resources";
+import { images } from "../../resources";
 
 export class Item extends Actor {
   constructor(x: number, y: number) {

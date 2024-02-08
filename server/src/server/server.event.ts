@@ -1,15 +1,18 @@
+import { EntityType } from "implementation/entities/entity"
+
 abstract class Event {
     id: string
 }
 
-export class PlayerSpawnEvent extends Event {
+export class EntitySpawnEvent extends Event {
+    entity: EntityType
     x: number
     y: number
 }
 
-export class PlayerDespawnEvent extends Event {}
+export class EntityDespawnEvent extends Event {}
 
-export class PlayerMoveEvent extends Event {
+export class EntityMoveEvent extends Event {
     x: number
     y: number
 }

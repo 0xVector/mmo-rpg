@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PlayerMoveDto, PlayerUpdateDto } from "./core.gateway.dto";
+import { PlayerUpdateDto } from "./core.gateway.dto";
 import { ServerService } from "server/server.service";
 
 @Injectable()
@@ -27,7 +27,7 @@ export class CoreService {
   }
 
   public movePlayer(id: string, x: number, y: number): void {
-    this.server.movePlayer(id, x, y);
+    this.server.moveEntity(id, x, y);
   }
 
   public updatePlayer(data: PlayerUpdateDto): void {

@@ -1,26 +1,20 @@
-import { Actor, CollisionType, Engine, Shape, vec } from "excalibur";
-import { WSManager } from "../../websockets";
+import { CollisionType, Engine, Shape, vec } from "excalibur";
 import { PLAYER_SIZE, animations, spriteSheet } from "./player-sprites";
+import { CustomEntity } from "../entity";
 
-export class Player extends Actor {
-  public uuid: string;
+export class Player extends CustomEntity {
   public facing: "up" | "down" | "left" | "right";
   public isRunning: boolean;
-  protected wsManager: WSManager;
 
-  constructor(uuid: string, x: number, y: number, wsManager: WSManager) {
-    super({
-      x: x,
-      y: y,
+  constructor(id: string) {
+    super(id, {
       width: 15 * PLAYER_SIZE,
       height: 23 * PLAYER_SIZE,
       collisionType: CollisionType.Active,
       collider: Shape.Box(10 * PLAYER_SIZE, 3 * PLAYER_SIZE, vec(0.5, 0.5), vec(0, 8 * PLAYER_SIZE))
     });
-    this.uuid = uuid;
     this.facing = "down";
     this.isRunning = false;
-    this.wsManager = wsManager;
   }
 
   public onInitialize(engine: Engine) {
@@ -49,14 +43,5 @@ export class Player extends Actor {
     super.update(engine, delta);
     if (this.isRunning) this.graphics.use(`run-${this.facing}`);
     else this.graphics.use(`idle-${this.facing}`);
-  }
-
-  public move(x: number, y: number): void {
-    this.pos.x = x;
-    this.pos.y = y;
-  }
-
-  public despawn(): void {
-    this.kill();
   }
 }

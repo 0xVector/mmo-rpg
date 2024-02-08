@@ -2,16 +2,19 @@ import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Interval } from "@nestjs/schedule";
 import { Client } from "implementation/client";
-import { Player } from "implementation/player";
+import { Entity, EntityType } from "implementation/entities/entity";
+import { Player } from "implementation/entities/player";
 
 @Injectable()
 export class ServerService {
   private eventEmitter: EventEmitter2;
   private clients: Map<string, Client>;
+  private entities: Map<string, Entity>;
 
   constructor(eventEmitter: EventEmitter2) {
     this.eventEmitter = eventEmitter;
     this.clients = new Map();
+    this.entities = new Map();
   }
 
   public registerClient(clientSocket: WebSocket, playerName: string): string {
@@ -27,7 +30,7 @@ export class ServerService {
 
   public removeClient(id: string): void {
     this.clients.delete(id);
-    this.eventEmitter.emit("player.despawn", { id });
+    this.eventEmitter.emit("entity.despawn", { id });
     console.log(`Client ${id} left`);
   }
 
@@ -38,18 +41,29 @@ export class ServerService {
 
   public spawnPlayer(id: string): void {
     if (!this.clients.has(id)) return;
-    const player = this.clients.get(id).player;
-    this.eventEmitter.emit("player.spawn", { id, x: player.x, y: player.y });
+    const client = this.clients.get(id);
+    const player = client.player;
+    this.entities.set(player.id, player);
+    this.eventEmitter.emit("entity.spawn", {
+      id: player.id,
+      entity: EntityType.PLAYER,
+      x: player.x,
+      y: player.y
+    });
   }
 
-  public movePlayer(id: string, x: number, y: number): void {
-    if (!this.clients.has(id)) return;
-    const player = this.clients.get(id).player;
-    player.move(x, y);
-    this.eventEmitter.emit("player.move", { id, x, y });
+  public moveEntity(id: string, x: number, y: number): void {
+    if (!this.entities.has(id)) return;
+    const entity = this.entities.get(id);
+    entity.move(x, y);
+    this.eventEmitter.emit("entity.move", { id, x, y });
   }
 
-  public updatePlayer(id: string, facing: "up" | "down" | "left" | "right", isRunning: boolean): void {
+  public updatePlayer(
+    id: string,
+    facing: "up" | "down" | "left" | "right",
+    isRunning: boolean
+  ): void {
     if (!this.clients.has(id)) return;
     const player = this.clients.get(id).player;
     player.facing = facing;
@@ -85,11 +99,14 @@ export class ServerService {
   }
 
   private updateClient(client: Client): void {
-    this.clients.forEach((otherClient) => {
-      if (otherClient.id !== client.id) {
-        const player = otherClient.player;
-        this.sendTo(client, "player-spawn", { id: player.id, x: player.x, y: player.y });
-      }
+    this.entities.forEach((entity) => {
+      if (entity.id === client.id) return;
+      this.sendTo(client, "entity-spawn", {
+        id: entity.id,
+        entity: entity.entityType,
+        x: entity.x,
+        y: entity.y
+      });
     });
   }
 }

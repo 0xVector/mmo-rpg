@@ -1,5 +1,11 @@
+import { EntityType } from "./actors/entities/entity";
+
 abstract class Event {
   id: string;
+}
+
+abstract class EntityEvent extends Event {
+  entity: EntityType;
 }
 
 export class HeartbeatEvent extends Event {}
@@ -8,14 +14,14 @@ export class JoinEvent extends Event{}
 
 export class LeaveEvent extends Event {}
 
-export class PlayerSpawnEvent extends Event {
+export class EntitySpawnEvent extends EntityEvent {
   x: number;
   y: number;
 }
 
-export class PlayerDespawnEvent extends Event {}
+export class EntityDespawnEvent extends EntityEvent {}
 
-export class PlayerMoveEvent extends Event {
+export class EntityMoveEvent extends EntityEvent {
   x: number;
   y: number;
 }

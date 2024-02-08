@@ -1,5 +1,5 @@
 import { Engine, IsometricMap, Scene } from "excalibur";
-import { Item } from "../actors/item";
+import { Item } from "../actors/items/item";
 import { WSManager } from "../websockets";
 import { tileSprite2 } from "./world-sprites";
 

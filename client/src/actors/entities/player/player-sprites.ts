@@ -1,5 +1,5 @@
 import { Animation, AnimationStrategy, Sprite, SpriteSheet, range } from "excalibur";
-import { images } from "../../resources";
+import { images } from "../../../resources";
 
 export const PLAYER_SIZE = 5;
 export const PLAYER_ANIMATION_SPEED = 200;

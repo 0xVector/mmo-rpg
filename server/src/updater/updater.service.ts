@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import {
-  PlayerSpawnEvent,
-  PlayerDespawnEvent,
-  PlayerMoveEvent,
+  EntitySpawnEvent,
+  EntityDespawnEvent,
+  EntityMoveEvent,
   PlayerUpdateEvent
 } from "server/server.event";
 import { ServerService } from "server/server.service";
@@ -16,23 +16,26 @@ export class UpdaterService {
     this.server = server;
   }
 
-  @OnEvent("player.spawn")
-  playerSpawned(event: PlayerSpawnEvent) {
-    this.server.broadcast("player-spawn", {
+  @OnEvent("entity.spawn")
+  playerSpawned(event: EntitySpawnEvent) {
+    this.server.broadcast("entity-spawn", {
       id: event.id,
+      entity: event.entity,
       x: event.x,
       y: event.y
     });
   }
 
-  @OnEvent("player.despawn")
-  playerDespawned(event: PlayerDespawnEvent) {
-    this.server.broadcast("player-despawn", { id: event.id });
+  @OnEvent("entity.despawn")
+  playerDespawned(event: EntityDespawnEvent) {
+    this.server.broadcast("entity-despawn", {
+      id: event.id
+    });
   }
 
-  @OnEvent("player.move")
-  playerMoved(event: PlayerMoveEvent) {
-    this.server.broadcast("player-move", {
+  @OnEvent("entity.move")
+  playerMoved(event: EntityMoveEvent) {
+    this.server.broadcast("entity-move", {
       id: event.id,
       x: event.x,
       y: event.y

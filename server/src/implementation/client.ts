@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Player } from "./player";
+import { Player } from "./entities/player";
 
 export class Client {
     public socket: WebSocket;

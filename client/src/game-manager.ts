@@ -1,23 +1,24 @@
 import { Engine, Scene } from "excalibur";
 import { WSManager } from "./websockets";
 import {
+  EntityDespawnEvent,
+  EntityMoveEvent,
+  EntitySpawnEvent,
   HeartbeatEvent,
   JoinEvent,
   LeaveEvent,
-  PlayerDespawnEvent,
-  PlayerMoveEvent,
-  PlayerSpawnEvent,
   PlayerUpdateEvent
 } from "./events";
-import { Player } from "./actors/player/player";
-import { PlayerOwn } from "./actors/player/player-own";
+import { CustomEntity } from "./actors/entities/entity";
+import { PlayerOwn } from "./actors/entities/player/player-own";
+import { createEntity } from "./actors/entities/entity-factory";
 
 export class GameManager {
   private game: Engine;
   private ws: WSManager;
   private mainScene: Scene;
-  private players: Map<string, Player> = new Map();
-  private uuid: string;
+  private entities: Map<string, CustomEntity> = new Map();
+  private id: string;
   private ownPlayer: PlayerOwn;
 
   constructor(game: Engine, ws: WSManager, mainScene: Scene) {
@@ -34,16 +35,16 @@ export class GameManager {
   }
 
   public onLoaded() {
-    this.ws.send("spawn", { id: this.uuid })
+    this.ws.send("spawn", { id: this.id });
   }
 
   private registerHandlers() {
     this.ws.registerHandler("heartbeat", this.replyHeartbeat.bind(this));
     this.ws.registerHandler("join", this.handleJoin.bind(this));
     this.ws.registerHandler("leave", this.handleLeave.bind(this));
-    this.ws.registerHandler("player-spawn", this.handlePlayerSpawn.bind(this));
-    this.ws.registerHandler("player-despawn", this.handlePlayerDespawn.bind(this));
-    this.ws.registerHandler("player-move", this.handlePlayerMove.bind(this));
+    this.ws.registerHandler("entity-spawn", this.handleEntitySpawn.bind(this));
+    this.ws.registerHandler("entity-despawn", this.handleEntityDespawn.bind(this));
+    this.ws.registerHandler("entity-move", this.handleEntityMove.bind(this));
     this.ws.registerHandler("player-update", this.handlePlayerUpdate.bind(this));
   }
 
@@ -52,44 +53,45 @@ export class GameManager {
   }
 
   private handleJoin(data: JoinEvent) {
-    this.uuid = data.id;
+    this.id = data.id;
   }
 
   private handleLeave(data: LeaveEvent) {
     this.ownPlayer.despawn();
   }
 
-  private handlePlayerSpawn(data: PlayerSpawnEvent) {
-    let player: Player;
-    if (data.id === this.uuid) {
-      player = new PlayerOwn(data.id, 200, 200, this.ws);
-      this.ownPlayer = player as PlayerOwn;
-      this.game.currentScene.camera.strategy.elasticToActor(player, 0.5, 0.7);
+  private handleEntitySpawn(data: EntitySpawnEvent) {
+    let entity: CustomEntity;
+    if (data.id === this.id) {
+      entity = new PlayerOwn(data.id, this.ws);
+      this.ownPlayer = entity as PlayerOwn;
+      this.game.currentScene.camera.strategy.elasticToActor(entity, 0.5, 0.7);
     } else {
-        player = new Player(data.id, data.x, data.y, this.ws);
+      entity = createEntity(data.entity, data.id);
     }
 
-    this.players.set(player.uuid, player);
-    this.mainScene.add(player);
+    this.entities.set(entity.id, entity);
+    entity.spawn(data.x, data.y);
+    this.mainScene.add(entity);
   }
 
-  private handlePlayerDespawn(data: PlayerDespawnEvent) {
-    const player = this.players.get(data.id);
-    if (player) {
-      player.despawn();
-      this.players.delete(data.id);
+  private handleEntityDespawn(data: EntityDespawnEvent) {
+    const entity = this.entities.get(data.id);
+    if (entity) {
+      entity.despawn();
+      this.entities.delete(data.id);
     }
   }
 
-  private handlePlayerMove(data: PlayerMoveEvent) {
-    const player = this.players.get(data.id);
-    if (player && player !== this.ownPlayer) {
-      player.move(data.x, data.y);
+  private handleEntityMove(data: EntityMoveEvent) {
+    const entity = this.entities.get(data.id);
+    if (entity && entity !== this.ownPlayer) {
+      entity.move(data.x, data.y);
     }
   }
 
   private handlePlayerUpdate(data: PlayerUpdateEvent) {
-    const player = this.players.get(data.id);
+    const player = this.entities.get(data.id) as PlayerOwn;
     if (player && player !== this.ownPlayer) {
       player.facing = data.facing;
       player.isRunning = data.isRunning;
