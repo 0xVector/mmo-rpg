@@ -18,7 +18,12 @@ export abstract class CustomEntity extends Actor implements Spawnable {
     this.netId = id;
   }
 
-  public move(x: number, y: number, speed: number): void {
+  public move(x: number, y: number): void {
+    this.pos.x = x;
+    this.pos.y = y;
+  }
+
+  public moveGradually(x: number, y: number, speed: number): void {
     this.actions.moveTo(x, y, speed);
   }
 

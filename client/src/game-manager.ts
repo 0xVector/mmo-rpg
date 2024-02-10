@@ -86,7 +86,8 @@ export class GameManager {
   private handleEntityMove(data: EntityMoveEvent) {
     const entity = this.entities.get(data.id);
     if (entity && entity !== this.ownPlayer) {
-      entity.move(data.x, data.y, data.speed);
+      if (data.speed === 0) entity.move(data.x, data.y);
+      else entity.moveGradually(data.x, data.y, data.speed);
     }
   }
 
