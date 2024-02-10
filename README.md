@@ -11,7 +11,7 @@ The server communicates with clients by establishing WebSocket connections.
 ### Client
 
 1. [Install bun](https://bun.sh/) on your machine (also required for server)
-2. Run `bun install` here
+2. Run `bun install --production` here
 3. Build the client with `bun run build`
 4. Serve the client with `bun run client`
 
