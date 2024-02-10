@@ -1,9 +1,14 @@
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Tickable } from "implementation/tickable";
+import { EntityMoveEvent } from "server/server.event";
+import { ServerService } from "server/server.service";
+
 export enum EntityType {
   PLAYER = "player",
   SLIME = "slime"
 }
 
-export abstract class Entity {
+export abstract class Entity implements Tickable {
   public id: string;
   public entityType: EntityType;
   public x: number;
@@ -16,12 +21,11 @@ export abstract class Entity {
     this.y = y;
   }
 
-  public moveTo(x: number, y: number): void {
+  public tick(tick: number, server: ServerService, emitter: EventEmitter2): void {}  // Do nothing by default
+
+  public moveTo(x: number, y: number): EntityMoveEvent {
     this.x = x;
     this.y = y;
-  }
-
-  public moveBy(x: number, y: number): void {
-    this.moveTo(this.x + x, this.y + y);
+    return { id: this.id, x, y, speed: 0 };
   }
 }

@@ -8,6 +8,10 @@ import { Player } from "implementation/entities/player";
 
 @Injectable()
 export class ServerService {
+  static readonly MS_PER_TICK = 200;
+  static readonly MS_PER_HEARTBEAT = 1000;
+  static readonly MS_HEARTBEAT_TIMEOUT = 3000;
+
   private eventEmitter: EventEmitter2;
   private clients: Map<string, Client>;
   private entities: Map<string, Entity>;
@@ -73,7 +77,7 @@ export class ServerService {
     if (!this.entities.has(id)) return;
     const entity = this.entities.get(id);
     entity.moveTo(x, y);
-    this.eventEmitter.emit("entity.move", { id, x, y });
+    this.eventEmitter.emit("entity.move", { id, x, y, speed: 0});
   }
 
   public updatePlayer(
@@ -98,22 +102,25 @@ export class ServerService {
     client.socket.send(JSON.stringify({ event, data }));
   }
 
-  @Interval(200)
+  @Interval(ServerService.MS_PER_TICK)
   private processTick(): void {
-    
+    this.tick++;
+    this.entities.forEach((entity) => {
+      entity.tick(this.tick, this, this.eventEmitter);
+    });
   }
 
-  @Interval(1000)
+  @Interval(ServerService.MS_PER_HEARTBEAT)
   private checkHeartbeats(): void {
     const now = Date.now();
     this.clients.forEach((client) => {
-      if (now - client.lastHeartbeat > 3000) {
+      if (now - client.lastHeartbeat > ServerService.MS_HEARTBEAT_TIMEOUT) {
         this.removeClient(client.id);
       }
     });
   }
 
-  @Interval(1000)
+  @Interval(ServerService.MS_PER_HEARTBEAT)
   private heartbeat(): void {
     this.clients.forEach((client) => {
       this.sendTo(client, "heartbeat", { id: client.id });

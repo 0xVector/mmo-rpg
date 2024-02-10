@@ -17,7 +17,7 @@ export class UpdaterService {
   }
 
   @OnEvent("entity.spawn")
-  playerSpawned(event: EntitySpawnEvent) {
+  entitySpawned(event: EntitySpawnEvent) {
     this.server.broadcast("entity-spawn", {
       id: event.id,
       entity: event.entity,
@@ -27,18 +27,19 @@ export class UpdaterService {
   }
 
   @OnEvent("entity.despawn")
-  playerDespawned(event: EntityDespawnEvent) {
+  entityDespawned(event: EntityDespawnEvent) {
     this.server.broadcast("entity-despawn", {
       id: event.id
     });
   }
 
   @OnEvent("entity.move")
-  playerMoved(event: EntityMoveEvent) {
+  entityMoved(event: EntityMoveEvent) {
     this.server.broadcast("entity-move", {
       id: event.id,
       x: event.x,
-      y: event.y
+      y: event.y,
+      speed: event.speed
     });
   }
 

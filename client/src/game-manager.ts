@@ -86,7 +86,7 @@ export class GameManager {
   private handleEntityMove(data: EntityMoveEvent) {
     const entity = this.entities.get(data.id);
     if (entity && entity !== this.ownPlayer) {
-      entity.move(data.x, data.y);
+      entity.move(data.x, data.y, data.speed);
     }
   }
 
