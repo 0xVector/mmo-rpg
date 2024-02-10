@@ -18,7 +18,7 @@ export class GameManager {
   private ws: WSManager;
   private mainScene: Scene;
   private entities: Map<string, CustomEntity> = new Map();
-  private id: string;
+  private netId: string;
   private ownPlayer: PlayerOwn;
 
   constructor(game: Engine, ws: WSManager, mainScene: Scene) {
@@ -35,7 +35,7 @@ export class GameManager {
   }
 
   public onLoaded() {
-    this.ws.send("spawn", { id: this.id });
+    this.ws.send("spawn", { id: this.netId });
   }
 
   private registerHandlers() {
@@ -53,7 +53,7 @@ export class GameManager {
   }
 
   private handleJoin(data: JoinEvent) {
-    this.id = data.id;
+    this.netId = data.id;
   }
 
   private handleLeave(data: LeaveEvent) {
@@ -62,7 +62,7 @@ export class GameManager {
 
   private handleEntitySpawn(data: EntitySpawnEvent) {
     let entity: CustomEntity;
-    if (data.id === this.id) {
+    if (data.id === this.netId) {
       entity = new PlayerOwn(data.id, this.ws);
       this.ownPlayer = entity as PlayerOwn;
       this.game.currentScene.camera.strategy.elasticToActor(entity, 0.5, 0.7);
@@ -70,7 +70,7 @@ export class GameManager {
       entity = createEntity(data.entity, data.id);
     }
 
-    this.entities.set(entity.id, entity);
+    this.entities.set(entity.netId, entity);
     entity.spawn(data.x, data.y);
     this.mainScene.add(entity);
   }

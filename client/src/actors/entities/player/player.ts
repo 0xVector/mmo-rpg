@@ -1,13 +1,13 @@
 import { CollisionType, Engine, Shape, vec } from "excalibur";
-import { PLAYER_SIZE, animations, spriteSheet } from "./player-sprites";
+import { PLAYER_SIZE, animations } from "./player-sprites";
 import { CustomEntity } from "../entity";
 
 export class Player extends CustomEntity {
   public isRunning: boolean;
   public facing: "down" | "up" | "right" | "left";
 
-  constructor(id: string) {
-    super(id, {
+  constructor(netId: string) {
+    super(netId, {
       width: 15 * PLAYER_SIZE,
       height: 23 * PLAYER_SIZE,
       collisionType: CollisionType.Active,

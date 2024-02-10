@@ -4,8 +4,8 @@ import { SLIME_SIZE, animations } from "./slime-sprites";
 
 export class Slime extends CustomEntity {
 
-    constructor(id: string) {
-        super(id, {
+    constructor(netId: string) {
+        super(netId, {
             width: 16*SLIME_SIZE,
             height: 12*SLIME_SIZE,
             collisionType: CollisionType.Active,

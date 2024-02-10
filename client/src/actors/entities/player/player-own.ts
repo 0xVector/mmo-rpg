@@ -7,8 +7,8 @@ export class PlayerOwn extends Player {
   private lastState: { facing: "up" | "down" | "left" | "right"; isRunning: boolean };
   private wsManager: WSManager;
 
-  constructor(id: string, wsManager: WSManager) {
-    super(id);
+  constructor(netId: string, wsManager: WSManager) {
+    super(netId);
     this.lastState = { facing: "down", isRunning: false };
     this.wsManager = wsManager;
   }
@@ -20,7 +20,7 @@ export class PlayerOwn extends Player {
   public override spawn(x: number, y: number): void {
     super.spawn(x, y);
     this.lastXY = { x, y };
-    console.log("PlayerOwn spawned ", this.id);
+    console.log("PlayerOwn spawned ", this.netId);
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {
@@ -58,14 +58,14 @@ export class PlayerOwn extends Player {
     super.update(engine, delta);
     if (this.pos.x != this.lastXY.x || this.pos.y != this.lastXY.y) {
       this.wsManager.send("move", {
-        id: this.id,
+        id: this.netId,
         x: this.pos.x,
         y: this.pos.y
       });
     }
     if (this.facing != this.lastState.facing || this.isRunning != this.lastState.isRunning) {
       this.wsManager.send("update", {
-        id: this.id,
+        id: this.netId,
         facing: this.facing,
         isRunning: this.isRunning
       });

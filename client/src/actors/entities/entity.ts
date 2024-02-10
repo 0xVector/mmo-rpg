@@ -1,4 +1,4 @@
-import { Actor, ActorArgs } from "excalibur";
+import { Actor, ActorArgs, CollisionGroup, CollisionGroupManager } from "excalibur";
 import { Spawnable } from "./interfaces/spawnable";
 
 export enum EntityType {
@@ -7,12 +7,15 @@ export enum EntityType {
 }
 
 export abstract class CustomEntity extends Actor implements Spawnable {
-  public id: string;
+  private static colisionGroup = CollisionGroupManager.create("entities");
+
+  public netId: string;
   public spawned: boolean = false;
 
-  constructor(id: string, config?: ActorArgs) {
+  constructor(id: string, config: ActorArgs = {}) {
+    config.collisionGroup = CustomEntity.colisionGroup;
     super(config);
-    this.id = id;
+    this.netId = id;
   }
 
   public move(x: number, y: number, speed: number): void {
