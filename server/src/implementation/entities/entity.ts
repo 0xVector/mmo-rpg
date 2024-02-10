@@ -16,8 +16,12 @@ export abstract class Entity {
     this.y = y;
   }
 
-  public move(x: number, y: number): void {
+  public moveTo(x: number, y: number): void {
     this.x = x;
     this.y = y;
+  }
+
+  public moveBy(x: number, y: number): void {
+    this.moveTo(this.x + x, this.y + y);
   }
 }

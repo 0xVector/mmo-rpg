@@ -2,7 +2,7 @@ import { Animation, AnimationStrategy, Sprite, SpriteSheet, range } from "excali
 import { images } from "../../../resources";
 
 export const PLAYER_SIZE = 5;
-export const PLAYER_ANIMATION_SPEED = 200;
+const PLAYER_ANIMATION_SPEED = 200;
 
 export const sprite = new Sprite({
   image: images.playerImage,
@@ -31,6 +31,11 @@ export const spriteSheet = SpriteSheet.fromImageSource({
     margin: { x: 33, y: 25 }
   }
 });
+
+// Set destSize for all sprites
+for (let sprite of spriteSheet.sprites) {
+  sprite.destSize = { height: 23 * PLAYER_SIZE, width: 15 * PLAYER_SIZE };
+}
 
 // Animations
 export const animations = {

@@ -3,8 +3,8 @@ import { PLAYER_SIZE, animations, spriteSheet } from "./player-sprites";
 import { CustomEntity } from "../entity";
 
 export class Player extends CustomEntity {
-  public facing: "up" | "down" | "left" | "right";
   public isRunning: boolean;
+  public facing: "down" | "up" | "right" | "left";
 
   constructor(id: string) {
     super(id, {
@@ -13,15 +13,11 @@ export class Player extends CustomEntity {
       collisionType: CollisionType.Active,
       collider: Shape.Box(10 * PLAYER_SIZE, 3 * PLAYER_SIZE, vec(0.5, 0.5), vec(0, 8 * PLAYER_SIZE))
     });
-    this.facing = "down";
     this.isRunning = false;
+    this.facing = "down";
   }
 
   public onInitialize(engine: Engine) {
-    for (let sprite of spriteSheet.sprites) {
-      sprite.destSize = { height: 23 * PLAYER_SIZE, width: 15 * PLAYER_SIZE };
-    }
-
     this.graphics.add("idle-down", animations.idleDownAnim);
     this.graphics.add("idle-up", animations.idleUpAnim);
     this.graphics.add("idle-right", animations.idleRightAnim);

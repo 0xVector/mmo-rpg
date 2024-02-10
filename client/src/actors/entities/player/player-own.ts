@@ -62,7 +62,6 @@ export class PlayerOwn extends Player {
         x: this.pos.x,
         y: this.pos.y
       });
-      console.log("PlayerOwn moved ", this.id);
     }
     if (this.facing != this.lastState.facing || this.isRunning != this.lastState.isRunning) {
       this.wsManager.send("update", {

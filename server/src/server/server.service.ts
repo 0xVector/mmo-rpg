@@ -3,6 +3,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Interval } from "@nestjs/schedule";
 import { Client } from "implementation/client";
 import { Entity, EntityType } from "implementation/entities/entity";
+import { createEntity } from "implementation/entities/entity-factory";
 import { Player } from "implementation/entities/player";
 
 @Injectable()
@@ -10,11 +11,16 @@ export class ServerService {
   private eventEmitter: EventEmitter2;
   private clients: Map<string, Client>;
   private entities: Map<string, Entity>;
+  private tick: number;
 
   constructor(eventEmitter: EventEmitter2) {
     this.eventEmitter = eventEmitter;
     this.clients = new Map();
     this.entities = new Map();
+    this.tick = 0;
+
+    this.spawnEntity(EntityType.SLIME, 10, 10);
+    this.spawnEntity(EntityType.SLIME, 20, 20);
   }
 
   public registerClient(clientSocket: WebSocket, playerName: string): string {
@@ -52,10 +58,21 @@ export class ServerService {
     });
   }
 
+  public spawnEntity(entityType: EntityType, x: number, y: number): void {
+    const entity = createEntity(entityType, x, y);
+    this.entities.set(entity.id, entity);
+    this.eventEmitter.emit("entity.spawn", {
+      id: entity.id,
+      entity: entity.entityType,
+      x: entity.x,
+      y: entity.y
+    });
+  }
+
   public moveEntity(id: string, x: number, y: number): void {
     if (!this.entities.has(id)) return;
     const entity = this.entities.get(id);
-    entity.move(x, y);
+    entity.moveTo(x, y);
     this.eventEmitter.emit("entity.move", { id, x, y });
   }
 
@@ -79,6 +96,11 @@ export class ServerService {
 
   public sendTo(client: Client, event: string, data: any): void {
     client.socket.send(JSON.stringify({ event, data }));
+  }
+
+  @Interval(200)
+  private processTick(): void {
+    
   }
 
   @Interval(1000)
