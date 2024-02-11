@@ -14,4 +14,4 @@ The server is now running at `localhost:3000`.
 
 ## Documentation
 
-See the typedoc [here]() (coming soon).
+See the typedoc [here](https://0xvector.me/mmo-rpg/server).
