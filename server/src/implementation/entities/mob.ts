@@ -10,7 +10,6 @@ export abstract class Mob extends Entity {
     super(uuid(), entityType, x, y);
     this.hp = hp;
     this.speed = 0;
-    this.hidden = false;
   }
   
   public override moveTo(x: number, y: number): EntityMoveEvent {

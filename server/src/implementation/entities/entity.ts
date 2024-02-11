@@ -21,7 +21,7 @@ export abstract class Entity implements Tickable {
     this.entityType = entityType;
     this.x = x;
     this.y = y;
-    this.hidden = true;
+    this.hidden = false;
   }
 
   public tick(tick: number, server: ServerService, emitter: EventEmitter2): void {}  // Do nothing by default
