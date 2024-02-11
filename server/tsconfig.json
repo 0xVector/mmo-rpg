@@ -3,7 +3,7 @@
   "compilerOptions": {
     // Bun stuff
     // add Bun type definitions
-    "types": ["bun-types"],
+    "types": ["bun-types", "jest"],
 
     // enable latest features
     // "lib": ["esnext"],
