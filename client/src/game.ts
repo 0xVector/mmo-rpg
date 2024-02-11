@@ -16,4 +16,4 @@ loader.onUserAction().then(() => {gameManager.onLoaded.bind(gameManager)()});
 game.start(loader);
 game.add("main", mainScene);
 game.goToScene("main");
-game.showDebug(true);
+// game.showDebug(true);
