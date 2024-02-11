@@ -31,6 +31,7 @@ See the [respective guide](./server/README.md).
 - map generation
 - attacking
 - health
+- playernames
 - configurable settings (port etc.)
 
 ### Technical

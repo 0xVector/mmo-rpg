@@ -41,6 +41,7 @@ export class ServerService {
 
   public removeClient(id: string): void {
     this.clients.delete(id);
+    this.entities.delete(id);
     this.eventEmitter.emit("entity.despawn", { id });
     console.log(`Client ${id} left`);
   }
