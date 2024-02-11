@@ -48,6 +48,6 @@ The client is written in TypeScript with [Excalibur.js](https://excaliburjs.com/
 
 ## Documentation
 
-See the typedoc [here](https://github.com/0xVector/mmo-rpg/deployments/github-pages).
+See the typedoc [here](https://0xvector.me/mmo-rpg/).
 
 ## Libraries
