@@ -46,4 +46,8 @@ See [server](./server/).
 
 The client is written in TypeScript with [Excalibur.js](https://excaliburjs.com/). It comes with a simple HTTP server that can be run with Bun or NodeJS to server the client page.
 
+## Documentation
+
+See the typedoc [here](./docs/index.html).
+
 ## Libraries

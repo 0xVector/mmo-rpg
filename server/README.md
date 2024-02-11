@@ -11,3 +11,7 @@ The server is for now naive - it presumes that clients only send correct data, s
 3. Build with `bun run start:prod`
 
 The server is now running at `localhost:3000`.
+
+## Documentation
+
+See the typedoc [here](./docs/index.html).
