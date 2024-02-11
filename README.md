@@ -13,9 +13,10 @@ The clients automatically joins the game after interacting with the game screen.
 ### Client
 
 1. [Install bun](https://bun.sh/) on your machine (also required for server)
-2. Run `bun install --production` here
-3. Build the client with `bun run build`
-4. Serve the client with `bun run client`
+2. Clone with `git clone https://github.com/0xVector/mmo-rpg.git`, then `cd mmo-rpg`
+3. Run `bun install --production` here
+4. Build the client with `bun run build`
+5. Serve the client with `bun run client`
 
 The client is now running at [`http://localhost:8080/index.html`](http://localhost:8080/index.html).
 
