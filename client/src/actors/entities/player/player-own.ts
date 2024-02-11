@@ -20,7 +20,6 @@ export class PlayerOwn extends Player {
   public override spawn(x: number, y: number): void {
     super.spawn(x, y);
     this.lastXY = { x, y };
-    console.log("PlayerOwn spawned ", this.netId);
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {

@@ -16,6 +16,7 @@ export class Slime extends Mob {
     super(EntityType.SLIME, x, y, Slime.MAX_HP);
     this.lastMoveTick = 0;
     this.speed = Math.random() * Slime.MAX_SPEED;
+    this.lastMoveTick = 10;
   }
 
   public override tick(tick: number, server: ServerService, eventEmitter: EventEmitter2): void {
@@ -28,7 +29,6 @@ export class Slime extends Mob {
   public movement(): EntityMoveEvent {
     const x = Math.floor((Math.random() < 0.5 ? 1 : -1) * Math.random() * Slime.MAX_MOVE_DISTANCE);
     const y = Math.floor((Math.random() < 0.5 ? 1 : -1) * Math.random() * Slime.MAX_MOVE_DISTANCE);
-    console.log(`Slime ${this.id} moved to ${this.x}, ${this.y}`);
     return this.moveTo(this.x + x, this.y + y);
   }
 }

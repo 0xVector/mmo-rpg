@@ -29,8 +29,6 @@ export class Player extends CustomEntity {
 
     this.graphics.use("idle-down");
     this.z = 100;
-
-    console.log("Player spawned");
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {}

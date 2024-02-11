@@ -16,7 +16,6 @@ export class Slime extends CustomEntity {
     public onInitialize(engine: Engine): void {
         this.graphics.add("idle", animations.idleAnim);
         this.graphics.use("idle");
-        console.log("Slime spawned");
     }
 
     public onPreUpdate(_engine: any, _delta: number): void {}

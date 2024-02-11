@@ -5,6 +5,7 @@ import { Client } from "implementation/client";
 import { Entity, EntityType } from "implementation/entities/entity";
 import { createEntity } from "implementation/entities/entity-factory";
 import { Player } from "implementation/entities/player";
+import { Spawner } from "implementation/entities/spawner";
 
 @Injectable()
 export class ServerService {
@@ -23,8 +24,8 @@ export class ServerService {
     this.entities = new Map();
     this.tick = 0;
 
-    this.spawnEntity(EntityType.SLIME, 10, 10);
-    this.spawnEntity(EntityType.SLIME, 20, 20);
+    const spawner = new Spawner(0, 0);
+    this.entities.set(spawner.id, spawner);
   }
 
   public registerClient(clientSocket: WebSocket, playerName: string): string {
@@ -130,6 +131,7 @@ export class ServerService {
   private updateClient(client: Client): void {
     this.entities.forEach((entity) => {
       if (entity.id === client.id) return;
+      if (entity.hidden) return;
       this.sendTo(client, "entity-spawn", {
         id: entity.id,
         entity: entity.entityType,

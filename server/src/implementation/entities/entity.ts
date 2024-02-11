@@ -5,7 +5,8 @@ import { ServerService } from "server/server.service";
 
 export enum EntityType {
   PLAYER = "player",
-  SLIME = "slime"
+  SLIME = "slime",
+  SPAWNER = "spawner"
 }
 
 export abstract class Entity implements Tickable {
@@ -13,12 +14,14 @@ export abstract class Entity implements Tickable {
   public entityType: EntityType;
   public x: number;
   public y: number;
+  public hidden: boolean;
 
   constructor(id: string, entityType: EntityType, x: number, y: number) {
     this.id = id;
     this.entityType = entityType;
     this.x = x;
     this.y = y;
+    this.hidden = true;
   }
 
   public tick(tick: number, server: ServerService, emitter: EventEmitter2): void {}  // Do nothing by default
