@@ -2,6 +2,8 @@
 
 This is the client for the [mmo-rpg project](../) written in [NestJS](https://nestjs.com/). It is designed to be run with [Bun](https://bun.sh), but can also be run with NodeJS (some config tweaking will be required).
 
+The server communicates with the clients by opening WebSocket connections. It implements its own keep-alive and timeout mechanism. The data is sent as JSON according to a pre-defined schema.
+
 The server is for now naive - it presumes that clients only send correct data, so it is susceptible to cheating clients. However, it is not just a simple forwarder of messages between the clients - most of the game logic origins in the server and it is ready to have full data validation (and thus recognise cheating clients).
 
 ## Installation

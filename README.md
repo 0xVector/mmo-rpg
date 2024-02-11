@@ -6,6 +6,8 @@
 
 The server communicates with clients by establishing WebSocket connections.
 
+The clients automatically joins the game after interacting with the game screen. The player can move around (`WASD`) the map and chase slimes. Inactive clients (eg. closed browser) are kicked. Each new instance (eg. browser tab) established a new connection and is considered as a new client.
+
 ## Installation
 
 ### Client
