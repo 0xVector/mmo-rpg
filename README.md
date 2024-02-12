@@ -33,6 +33,14 @@ See the [respective guide](./server/README.md).
 
 ## Future plans
 
+### Short-term todo
+- slime death animation
+- player hp
+- PvP
+- redo some parts of attacking (player state sync feels especially fragile)
+- knockback
+- make attack animation less weird
+
 ### Features 
 - more mobs
 - attacking
@@ -41,6 +49,7 @@ See the [respective guide](./server/README.md).
 - health
 - playernames
 - configurable settings (port etc.)
+- draw own sprites
 
 ### Technical
 
@@ -66,3 +75,9 @@ The client is written in TypeScript with [Excalibur.js](https://excaliburjs.com/
 See the typedoc [here](https://0xvector.me/mmo-rpg/client).
 
 ## Libraries
+
+See the respective `package.json` for now.
+
+## Acknowledgements
+
+I used sprites from the free asset pack [Mystic woods](https://game-endeavor.itch.io/mystic-woods) (thanks!).
