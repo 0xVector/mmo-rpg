@@ -26,6 +26,11 @@ export class PlayerOwn extends Player {
     const MAX_SPEED = 400;
     const key = engine.input.keyboard;
 
+    if (key.wasPressed(Keys.Space)) {
+      console.log("Attack!");
+      this.attack();
+    }
+
     let targetVel = Vector.Zero;
     if (key.isHeld(Keys.A) || key.isHeld(Keys.D) || key.isHeld(Keys.W) || key.isHeld(Keys.S)) {
       this.isRunning = true;
