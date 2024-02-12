@@ -36,6 +36,7 @@ See the [respective guide](./server/README.md).
 ### Short-term todo
 - slime death animation
 - player hp
+- make slimes follow players & deal damage
 - PvP
 - redo some parts of attacking (player state sync feels especially fragile)
 - knockback
