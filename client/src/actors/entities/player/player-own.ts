@@ -7,14 +7,18 @@ import { CustomEntity } from "../entity";
 
 export class PlayerOwn extends Player {
   private lastXY: { x: number; y: number };
-  private lastState: { facing: "up" | "down" | "left" | "right"; isRunning: boolean };
+  private lastState: {
+    facing: "up" | "down" | "left" | "right";
+    isRunning: boolean;
+    isAttacking: boolean;
+  };
   private attackEntity: Attack | null;
   private gameManager: GameManager;
   private wsManager: WSManager;
 
   constructor(netId: string, gameManager: GameManager, wsManager: WSManager) {
     super(netId);
-    this.lastState = { facing: "down", isRunning: false };
+    this.lastState = { facing: "down", isRunning: false, isAttacking: false};
     this.attackEntity = null;
     this.gameManager = gameManager;
     this.wsManager = wsManager;
@@ -35,7 +39,7 @@ export class PlayerOwn extends Player {
     const key = engine.input.keyboard;
 
     if (key.wasPressed(Keys.Space)) {
-      this.attack();
+      this.doAttack();
       // this.wsManager.send("attack", { id: this.netId });
     }
 
@@ -75,15 +79,20 @@ export class PlayerOwn extends Player {
         y: this.pos.y
       });
     }
-    if (this.facing != this.lastState.facing || this.isRunning != this.lastState.isRunning) {
+    if (
+      this.facing != this.lastState.facing ||
+      this.isRunning != this.lastState.isRunning ||
+      this.isAttacking != this.lastState.isAttacking
+    ) {
       this.wsManager.send("update", {
         id: this.netId,
         facing: this.facing,
-        isRunning: this.isRunning
+        isRunning: this.isRunning,
+        isAttacking: this.isAttacking
       });
     }
     this.lastXY = { x: this.pos.x, y: this.pos.y };
-    this.lastState = { facing: this.facing, isRunning: this.isRunning };
+    this.lastState = { facing: this.facing, isRunning: this.isRunning, isAttacking: this.isAttacking};
   }
 
   public onPostUpdate(engine: Engine, delta: number): void {
@@ -96,9 +105,9 @@ export class PlayerOwn extends Player {
     }
   }
 
-  public override attack(): void {
+  public doAttack(): void {
     if (this.isAttacking) return;
-    super.attack();
+    this.attack();
 
     this.attackEntity = new Attack(this.pos.x, this.pos.y);
     this.gameManager.addEntity(this.attackEntity);
@@ -109,7 +118,7 @@ export class PlayerOwn extends Player {
 
       const target = e.other.owner as CustomEntity;
       if (target.netId === this.netId) return; // Don't hit yourself
-      this.wsManager.send("attack", { id: this.netId, targetId: target.netId});
+      this.wsManager.send("attack", { id: this.netId, targetId: target.netId });
     });
 
     // this.wsManager.send("attack", { id: this.netId });

@@ -86,13 +86,15 @@ export class ServerService {
   public updatePlayer(
     id: string,
     facing: "up" | "down" | "left" | "right",
-    isRunning: boolean
+    isRunning: boolean,
+    isAttacking: boolean
   ): void {
     if (!this.clients.has(id)) return;
     const player = this.clients.get(id).player;
     player.facing = facing;
     player.isRunning = isRunning;
-    this.eventEmitter.emit("player.update", { id, facing, isRunning });
+    player.isAttacking = isAttacking;
+    this.eventEmitter.emit("player.update", { id, facing, isRunning, isAttacking });
   }
 
   public attack(id: string, targetId: string): void {

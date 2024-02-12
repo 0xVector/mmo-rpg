@@ -48,7 +48,8 @@ export class UpdaterService {
     this.server.broadcast("player-update", {
       id: event.id,
       facing: event.facing,
-      isRunning: event.isRunning
+      isRunning: event.isRunning,
+      isAttacking: event.isAttacking
     });
   }
 }

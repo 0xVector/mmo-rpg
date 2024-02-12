@@ -1,4 +1,4 @@
-import { Collider, Engine, Scene } from "excalibur";
+import { Engine, Scene } from "excalibur";
 import { WSManager } from "./websockets";
 import {
   EntityDespawnEvent,
@@ -12,6 +12,7 @@ import {
 import { CustomEntity } from "./actors/entities/entity";
 import { PlayerOwn } from "./actors/entities/player/player-own";
 import { createEntity } from "./actors/entities/entity-factory";
+import { Player } from "./actors/entities/player/player";
 
 export class GameManager {
   private game: Engine;
@@ -92,10 +93,11 @@ export class GameManager {
   }
 
   private handlePlayerUpdate(data: PlayerUpdateEvent) {
-    const player = this.entities.get(data.id) as PlayerOwn;
+    const player = this.entities.get(data.id) as Player;
     if (player && player !== this.ownPlayer) {
       player.facing = data.facing;
       player.isRunning = data.isRunning;
+      if (data.isAttacking) player.attack();
     }
   }
 

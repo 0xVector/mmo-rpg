@@ -21,4 +21,5 @@ export class EntityMoveEvent extends Event {
 export class PlayerUpdateEvent extends Event {
     facing: "up" | "down" | "left" | "right"
     isRunning: boolean
+    isAttacking: boolean
 }
