@@ -6,6 +6,10 @@ export abstract class Mob extends Entity {
   public hp: number;
   public speed: number;
 
+  get isDead(): boolean {
+    return this.hp <= 0;
+  }
+
   constructor(entityType: EntityType, x: number, y: number, hp: number) {
     super(uuid(), entityType, x, y);
     this.hp = hp;

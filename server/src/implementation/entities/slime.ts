@@ -5,7 +5,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EntityMoveEvent } from "server/server.event";
 
 export class Slime extends Mob {
-  static readonly MAX_HP = 10;
+  static readonly MAX_HP = 2;
   static readonly MAX_SPEED = 200;
   static readonly MAX_MOVE_DISTANCE = 100;
   static readonly JUMP_INTERVAL_TICKS = 15;

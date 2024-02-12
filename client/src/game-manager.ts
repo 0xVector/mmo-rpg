@@ -1,4 +1,4 @@
-import { Engine, Scene } from "excalibur";
+import { Collider, Engine, Scene } from "excalibur";
 import { WSManager } from "./websockets";
 import {
   EntityDespawnEvent,
@@ -63,7 +63,7 @@ export class GameManager {
   private handleEntitySpawn(data: EntitySpawnEvent) {
     let entity: CustomEntity;
     if (data.id === this.netId) {
-      entity = new PlayerOwn(data.id, this.ws);
+      entity = new PlayerOwn(data.id, this, this.ws);
       this.ownPlayer = entity as PlayerOwn;
       this.game.currentScene.camera.strategy.elasticToActor(entity, 0.5, 0.7);
     } else {
@@ -97,5 +97,15 @@ export class GameManager {
       player.facing = data.facing;
       player.isRunning = data.isRunning;
     }
+  }
+
+  public addEntity(entity: CustomEntity) {
+    this.entities.set(entity.netId, entity);
+    this.mainScene.add(entity);
+  }
+
+  public removeEntity(entity: CustomEntity) {
+    this.entities.delete(entity.netId);
+    this.mainScene.remove(entity);
   }
 }

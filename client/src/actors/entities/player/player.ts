@@ -7,7 +7,7 @@ export class Player extends CustomEntity {
 
   public isRunning: boolean;
   public facing: "down" | "up" | "right" | "left";
-  private msSinceLastAttack: number;
+  protected msSinceLastAttack: number;
 
   get isAttacking() {
     return this.msSinceLastAttack < Player.MS_PER_ATTACK;

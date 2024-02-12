@@ -45,6 +45,10 @@ See the [respective guide](./server/README.md).
 - migrate to the native WebSocket implementation of bun (better performance)
 - lag mitigation (client-side prediction etc.)
 - server side validation of **all** data (anticheat)
+- better OOP structure (both client & server)
+    - richer entity inheritance etc.
+    - split up server service into game logic and server logic
+    - split up game manager in client
 
 # Server
 

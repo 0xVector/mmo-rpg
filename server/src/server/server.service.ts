@@ -4,6 +4,7 @@ import { Interval } from "@nestjs/schedule";
 import { Client } from "implementation/client";
 import { Entity, EntityType } from "implementation/entities/entity";
 import { createEntity } from "implementation/entities/entity-factory";
+import { Mob } from "implementation/entities/mob";
 import { Player } from "implementation/entities/player";
 import { Spawner } from "implementation/entities/spawner";
 
@@ -79,7 +80,7 @@ export class ServerService {
     if (!this.entities.has(id)) return;
     const entity = this.entities.get(id);
     entity.moveTo(x, y);
-    this.eventEmitter.emit("entity.move", { id, x, y, speed: 0});
+    this.eventEmitter.emit("entity.move", { id, x, y, speed: 0 });
   }
 
   public updatePlayer(
@@ -92,6 +93,13 @@ export class ServerService {
     player.facing = facing;
     player.isRunning = isRunning;
     this.eventEmitter.emit("player.update", { id, facing, isRunning });
+  }
+
+  public attack(id: string, targetId: string): void {
+    if (!this.clients.has(id)) return;
+    const player = this.clients.get(id).player;
+    const target = this.entities.get(targetId);
+    if (target && target instanceof Mob) target.damage(1);
   }
 
   public broadcast(event: string, data: any): void {
@@ -110,6 +118,7 @@ export class ServerService {
     this.entities.forEach((entity) => {
       entity.tick(this.tick, this, this.eventEmitter);
     });
+    this.processDeaths();
   }
 
   @Interval(ServerService.MS_PER_HEARTBEAT)
@@ -133,12 +142,22 @@ export class ServerService {
     this.entities.forEach((entity) => {
       if (entity.id === client.id) return;
       if (entity.hidden) return;
+      if (entity instanceof Mob && entity.isDead) return;
       this.sendTo(client, "entity-spawn", {
         id: entity.id,
         entity: entity.entityType,
         x: entity.x,
         y: entity.y
       });
+    });
+  }
+
+  private processDeaths(): void {
+    this.entities.forEach((entity) => {
+      if (entity instanceof Mob && entity.isDead) {
+        this.entities.delete(entity.id);
+        this.eventEmitter.emit("entity.despawn", { id: entity.id });
+      }
     });
   }
 }

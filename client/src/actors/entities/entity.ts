@@ -3,17 +3,18 @@ import { Spawnable } from "./interfaces/spawnable";
 
 export enum EntityType {
   PLAYER = "player",
-  SLIME = "slime"
+  SLIME = "slime",
+  ATTACK = "attack"
 }
 
 export abstract class CustomEntity extends Actor implements Spawnable {
-  private static colisionGroup = CollisionGroupManager.create("entities");
+  private static entityCollisionGroup = CollisionGroupManager.create("entities");
 
   public netId: string;
   public spawned: boolean = false;
 
   constructor(id: string, config: ActorArgs = {}) {
-    config.collisionGroup = CustomEntity.colisionGroup;
+    if (!config.collisionGroup) config.collisionGroup = CustomEntity.entityCollisionGroup;
     super(config);
     this.netId = id;
   }

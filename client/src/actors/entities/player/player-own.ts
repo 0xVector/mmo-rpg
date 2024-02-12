@@ -1,15 +1,22 @@
-import { Engine, Keys, Vector } from "excalibur";
+import { CircleCollider, Collider, CollisionStartEvent, Engine, Keys, Vector } from "excalibur";
 import { WSManager } from "../../../websockets";
 import { Player } from "./player";
+import { GameManager } from "../../../game-manager";
+import { Attack } from "./attack";
+import { CustomEntity } from "../entity";
 
 export class PlayerOwn extends Player {
   private lastXY: { x: number; y: number };
   private lastState: { facing: "up" | "down" | "left" | "right"; isRunning: boolean };
+  private attackEntity: Attack | null;
+  private gameManager: GameManager;
   private wsManager: WSManager;
 
-  constructor(netId: string, wsManager: WSManager) {
+  constructor(netId: string, gameManager: GameManager, wsManager: WSManager) {
     super(netId);
     this.lastState = { facing: "down", isRunning: false };
+    this.attackEntity = null;
+    this.gameManager = gameManager;
     this.wsManager = wsManager;
   }
 
@@ -23,12 +30,13 @@ export class PlayerOwn extends Player {
   }
 
   public onPreUpdate(engine: Engine, _delta: number): void {
+    super.onPreUpdate(engine, _delta);
     const MAX_SPEED = 400;
     const key = engine.input.keyboard;
 
     if (key.wasPressed(Keys.Space)) {
-      console.log("Attack!");
       this.attack();
+      // this.wsManager.send("attack", { id: this.netId });
     }
 
     let targetVel = Vector.Zero;
@@ -78,7 +86,32 @@ export class PlayerOwn extends Player {
     this.lastState = { facing: this.facing, isRunning: this.isRunning };
   }
 
-  private easeOutQuint(x: number): number {
-    return 1 - (1 - x) ** 5;
+  public onPostUpdate(engine: Engine, delta: number): void {
+    super.onPostUpdate(engine, delta);
+
+    if (this.attackEntity && this.msSinceLastAttack > Player.MS_PER_ATTACK / 2) {
+      this.gameManager.removeEntity(this.attackEntity);
+      this.attackEntity.kill();
+      this.attackEntity = null;
+    }
+  }
+
+  public override attack(): void {
+    if (this.isAttacking) return;
+    super.attack();
+
+    this.attackEntity = new Attack(this.pos.x, this.pos.y);
+    this.gameManager.addEntity(this.attackEntity);
+
+    const collider = this.attackEntity.collider.get();
+    collider.events.on("collisionstart", (e: CollisionStartEvent<Collider>) => {
+      if (!e.other.owner || !(e.other.owner instanceof CustomEntity)) return;
+
+      const target = e.other.owner as CustomEntity;
+      if (target.netId === this.netId) return; // Don't hit yourself
+      this.wsManager.send("attack", { id: this.netId, targetId: target.netId});
+    });
+
+    // this.wsManager.send("attack", { id: this.netId });
   }
 }

@@ -33,4 +33,8 @@ export class CoreService {
   public updatePlayer(data: PlayerUpdateDto): void {
     this.server.updatePlayer(data.id, data.facing, data.isRunning);
   }
+
+  public attack(id: string, target: string): void {
+    this.server.attack(id, target);
+  }
 }

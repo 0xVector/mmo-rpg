@@ -35,3 +35,9 @@ export class PlayerUpdateDto extends BaseDto {
     @IsBoolean()
     isRunning: boolean;
 }
+
+export class AttackDto extends BaseDto {
+    @IsString()
+    @IsNotEmpty()
+    targetId: string;
+}

@@ -9,6 +9,7 @@ import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { UsePipes, ValidationPipe } from "@nestjs/common";
 import { CoreService } from "./core.service";
 import {
+  AttackDto,
   HeartbeatDto,
   JoinDto,
   LeaveDto,
@@ -74,5 +75,10 @@ export class CoreGateway {
   @SubscribeMessage("update")
   handlePlayerUpdate(@MessageBody() data: PlayerUpdateDto): void {
     this.coreService.updatePlayer(data);
+  }
+
+  @SubscribeMessage("attack")
+  handleAttack(@MessageBody() data: AttackDto) {
+    this.coreService.attack(data.id, data.targetId);
   }
 }
