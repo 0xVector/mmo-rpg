@@ -6,7 +6,10 @@
 
 The server communicates with clients by establishing WebSocket connections.
 
-The clients automatically joins the game after interacting with the game screen. The player can move around the map and chase slimes. Inactive clients (eg. closed browser) are kicked. Each new instance (eg. browser tab) established a new connection and is considered as a new client.
+The clients automatically joins the game after interacting with the game screen. Inactive clients (eg. closed browser) are kicked. Each new instance (eg. browser tab) established a new connection and is considered as a new client.
+
+### Gameplay
+For now, you can run around the map and kill the slimes spawning. PvP is not yet implemented.
 
 ### Controlls
 - use `WASD` to move around the map
