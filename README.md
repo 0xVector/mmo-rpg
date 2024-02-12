@@ -41,6 +41,7 @@ See the [respective guide](./server/README.md).
 - redo some parts of attacking (player state sync feels especially fragile)
 - knockback
 - make attack animation less weird
+- document the code better (so the generated docs are not so empty)
 
 ### Features 
 - more mobs
