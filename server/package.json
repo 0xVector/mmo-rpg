@@ -13,7 +13,7 @@
     "start": "nest start -e bun",
     "start:dev": "nest start -e bun --watch",
     "start:debug": "nest start -e bun --debug --watch",
-    "start:prod-old": "node dist/main",
+    "start:node": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
