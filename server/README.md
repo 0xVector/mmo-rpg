@@ -10,7 +10,7 @@ The server is for now naive - it presumes that clients only send correct data, s
 
 ### With Bun
 
-1. [Install bun](https://bun.sh/) on your machine (the same as for client, no need to install twice if using the same machine for both client and server).
+1. [Install bun](https://bun.sh/) on your machine with  with `npm install -g bun` (the same as for client).
 2. Clone with `git clone https://github.com/0xVector/mmo-rpg.git`, then `cd mmo-rpg/server`
 3. Run `bun install --production` here
 4. Build with `bun run start:prod`
@@ -19,9 +19,13 @@ The server is now running at `localhost:3000`.
 
 ### With NodeJS
 
-1. Clone with `git clone https://github.com/0xVector/mmo-rpg.git`, then `cd mmo-rpg/server`
-2. Run `npm install` here
-3. Build with `npm run start:node`
+Server can be run with only NodeJS, but bun is required as a package manager to install the required dependencies, as there is some problem with dependency resolution when installing using npm.
+
+1. Install bun (same as above).
+2. Clone with `git clone https://github.com/0xVector/mmo-rpg.git`, then `cd mmo-rpg/server`
+3. Run `bun install` here - the only step that requires bun
+4. Build with `npm run build`
+5. Start the server with `npm run start:node`
 
 ## Documentation
 

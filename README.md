@@ -21,7 +21,7 @@ For now, you can run around the map and kill the slimes spawning. PvP is not yet
 
 ### Client
 
-1. [Install bun](https://bun.sh/) on your machine (also required for server)
+1. [Install bun](https://bun.sh/) on your machine (also required for server) with `npm install -g bun`.
 2. Clone with `git clone https://github.com/0xVector/mmo-rpg.git`, then `cd mmo-rpg`
 3. Run `bun install --production` here
 4. Build the client with `bun run build`
