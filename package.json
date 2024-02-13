@@ -16,6 +16,7 @@
     "build": "bun build ./client/src/game.ts --outdir=client/out",
     "client": "bun run ./client/serve.ts",
     "dev": "bun run build && bun run client",
+    "build-pages": "bun build ./client/src/game.ts --outdir=docs",
     "gen-docs": "bun run typedoc --entryPointStrategy expand ./client/src --out ./docs/client"
   }
 }

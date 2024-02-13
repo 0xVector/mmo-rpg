@@ -2,6 +2,8 @@
 
 #### A basic browser-based multiplayer game with client and server written in TypeScript.
 
+*Click [**here**]((https://0xvector.me/mmo-rpg)) to access the pre-built web client!*
+
 ## Features
 
 The server communicates with clients by establishing WebSocket connections.
@@ -27,6 +29,8 @@ For now, you can run around the map and kill the slimes spawning. PvP is not yet
 
 The client is now running at [`http://localhost:8080/index.html`](http://localhost:8080/index.html).
 
+You can also try the [pre-built client](https://0xvector.me/mmo-rpg) served by github pages.
+
 ### Server
 
 See the [respective guide](./server/README.md).
@@ -42,6 +46,7 @@ See the [respective guide](./server/README.md).
 - knockback
 - make attack animation less weird
 - document the code better (so the generated docs are not so empty)
+- deploy the static client to github pages
 
 ### Features 
 - more mobs
@@ -56,6 +61,7 @@ See the [respective guide](./server/README.md).
 ### Technical
 
 - split server and client to separate repositories
+- save server state
 - migrate to the native WebSocket implementation of bun (better performance)
 - lag mitigation (client-side prediction etc.)
 - server side validation of **all** data (anticheat)
