@@ -2,7 +2,7 @@
 
 #### A basic browser-based multiplayer game with client and server written in TypeScript.
 
-*Click [**here**]((https://0xvector.me/mmo-rpg)) to access the pre-built web client!*
+*Access the pre-built web client at **[https://0xvector.me/mmo-rpg](https://0xvector.me/mmo-rpg)** to try out the game without building it yourself!*
 
 ## Features
 
