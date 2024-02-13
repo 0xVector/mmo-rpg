@@ -13,7 +13,7 @@ export class Spawner extends Entity {
     }
 
     public override tick(tick: number, server: ServerService, emitter: EventEmitter2): void {
-        if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN) {
+        if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && server.entityCount < 50) {
             this.lastSpawnTick = tick;
             server.spawnEntity(EntityType.SLIME, this.x, this.y);
         }

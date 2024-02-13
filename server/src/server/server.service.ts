@@ -19,6 +19,10 @@ export class ServerService {
   private entities: Map<string, Entity>;
   private tick: number;
 
+  get entityCount(): number {
+    return this.entities.size;
+  }
+
   constructor(eventEmitter: EventEmitter2) {
     this.eventEmitter = eventEmitter;
     this.clients = new Map();
