@@ -54,15 +54,14 @@ To allow for some interoperability with the server, the `Tickable` interface def
 There is a simple protocol defined for the communication over the WebSocket connection. It is based on JSON objects with a simple structre:
 ```json
 {
-    "event": <string eventName>,
-    "data": <json data>
+    "event": "event-name",
+    "data": {}
 }
 ```
 `data` is another JSON object that can contain arbitrary data (as defined by each event separately), with a single constraint - it has to provide an `id` field always matching the UUID of the player (and thus the client) **sending** the request:
 ```JSON
 data = {
-    "id": <string UUID>,
-    ...
+    "id": "uuid",
 }
 ```
 The shape of inbound requests from clients is defined by gateway DTOs and enforced by the class-validator library. NestJS automatically directs the requests to their proper handlers based on the `event` field, with the `data` field having to comply with the coresponding DTO.  
