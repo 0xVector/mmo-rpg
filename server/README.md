@@ -60,7 +60,7 @@ There is a simple protocol defined for the communication over the WebSocket conn
 ```
 `data` is another JSON object that can contain arbitrary data (as defined by each event separately), with a single constraint - it has to provide an `id` field always matching the UUID of the player (and thus the client) **sending** the request:
 ```JSON
-data = {
+{
     "id": "uuid",
 }
 ```
