@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Entity, EntityType } from "./entity";
+import { Entity, EntityType } from "../entity";
 import { EntityMoveEvent } from "server/server.event";
 
 export abstract class Mob extends Entity {

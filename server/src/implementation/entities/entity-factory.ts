@@ -1,5 +1,5 @@
 import { EntityType } from "./entity";
-import { Slime } from "./slime";
+import { Slime } from "./mobs/slime";
 
 export function createEntity(entityType: EntityType, x: number, y: number) {
   switch (entityType) {

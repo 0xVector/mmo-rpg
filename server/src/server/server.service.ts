@@ -4,7 +4,7 @@ import { Interval } from "@nestjs/schedule";
 import { Client } from "implementation/client";
 import { Entity, EntityType } from "implementation/entities/entity";
 import { createEntity } from "implementation/entities/entity-factory";
-import { Mob } from "implementation/entities/mob";
+import { Mob } from "implementation/entities/mobs/mob";
 import { Player } from "implementation/entities/player";
 import { Spawner } from "implementation/entities/spawner";
 
