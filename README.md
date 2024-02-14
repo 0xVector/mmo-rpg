@@ -62,6 +62,7 @@ See the [respective guide](./server/README.md).
 
 - split server and client to separate repositories
 - save server state
+- testing! (unit, possibly e2e - both client & server)
 - migrate to the native WebSocket implementation of bun (better performance)
 - lag mitigation (client-side prediction etc.)
 - server side validation of **all** data (anticheat)
@@ -76,7 +77,32 @@ See [server](./server/).
 
 # Client
 
-The client is written in TypeScript with [Excalibur.js](https://excaliburjs.com/). It comes with a simple HTTP server that can be run with Bun or NodeJS to server the client page.
+The client is written in TypeScript with [Excalibur.js](https://excaliburjs.com/). It comes with a simple HTTP server that can be run with Bun or NodeJS to server the client page. It uses the native browser WebSocket implementation.
+
+### Technical
+
+The client utilizes the common ExcaliburJS project structure. The main entrypoint is the `game.ts` file, where the engine and all dependencies are instantiated.
+
+#### Actors
+
+Actors are all the moving parts in ExcaliburJS. Here, they are in an inheritance structure resembling that of [server](./server/), but with its own important distinctions.
+
+There are the entities, with the `CustomEntity` base type, which defines the minimal properties of every entity (the main part is having an UUID, which is addressed as `netId` in client to distinguish it from the internal ExcaliburJS actor `id`). The most notable difference from the server implementation is that there are two different player classes. `Player` is the base player and by default represents other players on the map. `PlayerOwn` is the own, controllable player that inherits from `Player`.
+
+The second kind of actors are items, which is just a basic type for objects on the map, such as rocks. This is an area of future interest.
+
+#### Scenes
+
+Only a single `World` scene is used.
+
+#### GameManager
+
+`GameManager` is the manager class responsible for most of the communication, as well as game logic. It seems to be responsible for too many parts of the client logic and should be separated in the future into a communication and pure game part.  
+One of its main responsibilities is providing handlers for WebSocket request events. These events are a sort of a merge between the server request DTOs and internal events. They define the shape for inbound requests from the server, but are also used internally.  
+Its second responsibility is holding the game client state and providing some low-level methods allowing the parts with the higher level game logic to make changes to the state.
+
+#### WebSocket manager
+`WSManager` is a class responsible for just the lowest-level communication on the WebSocket layer. It holds the `WebSocket` instance of the underlying browser WebSocket implementation representing the client's connection to the server in its state, processes incoming requests and provides a way to register handlers for them.
 
 ## Documentation
 

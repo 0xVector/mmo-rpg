@@ -2,7 +2,8 @@
 
 This is the client for the [mmo-rpg project](../) written in [NestJS](https://nestjs.com/). It is designed to be run with [Bun](https://bun.sh), but can also be run with NodeJS (some config tweaking will be required).
 
-The server communicates with the clients by opening WebSocket connections. It implements its own keep-alive and timeout mechanism. The data is sent as JSON according to a pre-defined schema.
+The server communicates with the clients by opening WebSocket connections. The NodeJS WebSocket library [ws](https://github.com/websockets/ws) is used, with options to switch to the native Bun implementation thanks to Nest's platform agnosticism.  
+It implements its own keep-alive and timeout mechanism. The data is sent as JSON according to a pre-defined schema.
 
 The server is for now naive - it presumes that clients only send correct data, so it is susceptible to cheating clients. However, it is not just a simple forwarder of messages between the clients - most of the game logic origins in the server and it is ready to have full data validation (and thus recognise cheating clients).
 
@@ -21,7 +22,11 @@ The endpoints in the controller are protected via class-validator, a library val
 The central part of the server module is the server service. This is the central service holding the server state and a part of the the game logic, with the rest directly in the implementation module. There should be some effort made in the future to separate the rest of the game logic from this service and make it purely concerned with the server state and internal logic.  
 The server module also has its own events that are fired upon actions that require notifying the clients. This event-based system (utilizing the event framework from NestJS) is used as a layer of abstraction to separate the client-facing updater module, which is making the requests, from the server.
 
-The server has multiple interesting parts. It handles the registration of new clients and keeps the connected clients and existing entities in its state. It implements a few low-level methods that the more higher-level game logic can utilize.  
+The server has multiple interesting parts. It handles the registration of new clients and keeps the connected clients and existing entities in its state.  
+
+The server identifies all entities by their UUID. This is used globally, accross all clients, to provide a simple way to address every entity. These are usually automatically generated in the constructor, with the exception of players, which get their UUID assigned directly by the server. 
+The server also associates clients with UUIDs. For now, it uses the **same UUID** to address **both** the client and its respective `Player` entity instance.  
+It also implements a few low-level methods that the more higher-level game logic can utilize.  
 It implements a simple keep-alive protocol: it sends `heartbeat` requests to clients and expects to receive heartbeat responses from them, keeping a track of the last time it received one from each client. Clients not responding in time are kicked.
 
 The way it handles logic that takes place over some time is by a tick system. Specifically, every 200ms, it processes a "tick". This is a low-level abstraction providing some kind of "game turns" upon which the entities and the game logic can operate.
@@ -40,7 +45,7 @@ Overall, the three modules establish some structure with the aim of fulfilling t
 The implementation of the game logic is not a NestJS module, and it's purposely kept as separated from NestJS as possible. It is meant to implements most of the game logic and provide a structure for the different objects in the game.  
 Currently, the most important part are entities - an inheritance structure meant to properly represent the relationships between the "moving parts" in the game. With `Entity` being the base type, defined as anything identifiable having a location on the map, the live parts - players and slimes can be represented with clean relationships. In the future, this class is also supposed to represent a base type for non-living things, such as items and objects on the map (rocks).  
 To establish some structure for the mobs in the game, another abstract class `Mob` defines the basic properties that mobs should fulfill. For now, its only inheritor is the concrete `Slime` class.  
-The `Player` class holds the player state and its logic. Right now, it is a direct inheritor of `Entity`, but a richer structure seems reasonable here with future growth. The server doesn't make a difference between the individual players, as it automatically attaches one to each connected client.  
+The `Player` class holds the player state and its logic. Right now, it is a direct inheritor of `Entity`, but a richer structure seems reasonable here with future growth. The server doesn't make a difference between the individual players, as it automatically attaches one to each connected client.   
 `Client` class is also implemented here, even though it may make more sense to decouple it from the implementation of the actual game and put it inside the server module as it becomes more server logic oriented.  
 To allow for some interoperability with the server, the `Tickable` interface defines the constraints for anything that wants to consume the periodical calls from server ticks. All entities are by default tickable and ignore ticks, which can be overriden. Not only entities can be tickable, which is why this is an interface and not just a class method of `Entity`.
 
@@ -53,7 +58,14 @@ There is a simple protocol defined for the communication over the WebSocket conn
     "data": <json data>
 }
 ```
-The shape of the inbound requests from clients is defined by gateway DTOs and enforced by the class-validator library. NestJS automatically directs the requests to their proper handlers based on the `event` field, with the `data` field having to comply with the coresponding DTO.  
+`data` is another JSON object that can contain arbitrary data (as defined by each event separately), with a single constraint - it has to provide an `id` field always matching the UUID of the player (and thus the client) **sending** the request:
+```JSON
+data = {
+    "id": <string UUID>,
+    ...
+}
+```
+The shape of inbound requests from clients is defined by gateway DTOs and enforced by the class-validator library. NestJS automatically directs the requests to their proper handlers based on the `event` field, with the `data` field having to comply with the coresponding DTO.  
 The outbound requests look similar, but their expected structure is exactly defined only on client. They utilize the same basic interface of `event` and `data` fields.
 
 ## Installation
