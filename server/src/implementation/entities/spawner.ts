@@ -2,9 +2,7 @@ import { Entity, EntityType } from "./entity";
 import { ServerService } from "server/server.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
-/**
- * A simple spawner that spawns slimes
- */
+/** A simple spawner that spawns slimes */
 export class Spawner extends Entity {
   static TICKS_PER_SPAWN: number = 20;
 
