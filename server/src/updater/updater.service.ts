@@ -8,13 +8,13 @@ import {
 } from "server/server.event";
 import { ServerService } from "server/server.service";
 
+/** The updater service
+ *
+ * This service listens for server events and broadcasts updates to all connected clients
+ */
 @Injectable()
 export class UpdaterService {
-  private server: ServerService;
-
-  constructor(server: ServerService) {
-    this.server = server;
-  }
+  constructor(private server: ServerService) {}
 
   @OnEvent("entity.spawn")
   entitySpawned(event: EntitySpawnEvent) {

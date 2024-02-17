@@ -6,6 +6,7 @@ import { ServerModule } from "./server/server.module";
 import { UpdaterModule } from "./updater/updater.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 
+/* The root module of the application */
 @Module({
   imports: [
     CoreModule,
