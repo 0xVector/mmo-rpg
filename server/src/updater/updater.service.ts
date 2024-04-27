@@ -5,8 +5,8 @@ import {
   EntityDespawnEvent,
   EntityMoveEvent,
   PlayerUpdateEvent
-} from "server/server.event";
-import { ServerService } from "server/server.service";
+} from "../server/server.event";
+import { ServerService } from "../server/server.service";
 
 /** The updater service
  *

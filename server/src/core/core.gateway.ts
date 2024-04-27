@@ -8,8 +8,9 @@ import {
   WebSocketGateway,
   WebSocketServer
 } from "@nestjs/websockets";
-import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { Inject, LoggerService, UsePipes, ValidationPipe } from "@nestjs/common";
+import { WebSocket, WebSocketServer as WSServer } from "ws";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { CoreService } from "./core.service";
 import {
   AttackDto,
@@ -20,7 +21,6 @@ import {
   PlayerUpdateDto,
   SpawnDto
 } from "./core.gateway.dto";
-import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 /** The core WebSocket gateway */
 @WebSocketGateway({ transports: ["websocket"] })

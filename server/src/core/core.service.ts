@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PlayerUpdateDto } from "./core.gateway.dto";
-import { ServerService } from "server/server.service";
+import { ServerService } from "../server/server.service";
 
 /** The core service */
 @Injectable()
