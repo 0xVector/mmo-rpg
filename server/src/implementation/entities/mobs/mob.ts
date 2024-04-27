@@ -11,6 +11,11 @@ export abstract class Mob extends Entity {
     return this.hp <= 0;
   }
 
+  set isDead(dead: boolean) {
+    if (dead) this.hp = 0;
+    else this.hp = 1;
+  }
+
   /**
    * Create a new mob
    *
@@ -56,6 +61,6 @@ export abstract class Mob extends Entity {
    * Kill the mob
    */
   public kill(): void {
-    this.hp = 0;
+    this.isDead = true;
   }
 }
