@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Interval } from "@nestjs/schedule";
 import { Client } from "implementation/client";
@@ -7,6 +7,7 @@ import { createEntity } from "implementation/entities/entity-factory";
 import { Mob } from "implementation/entities/mobs/mob";
 import { Player } from "implementation/entities/player";
 import { Spawner } from "implementation/entities/spawner";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 /** The main server service */
 @Injectable()
@@ -24,7 +25,10 @@ export class ServerService {
     return this.entities.size;
   }
 
-  constructor(private eventEmitter: EventEmitter2) {
+  constructor(
+    private eventEmitter: EventEmitter2,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
+  ) {
     this.clients = new Map();
     this.entities = new Map();
     this.tick = 0;
@@ -47,8 +51,8 @@ export class ServerService {
     client.player = player;
 
     this.clients.set(client.id, client);
+    this.logger.log(`Player ${playerName} joined (${client.id})`);
     this.updateClient(client);
-    console.log(`Client ${client.id}, ${client.player.name} joined`);
     return client.id;
   }
 
@@ -59,10 +63,11 @@ export class ServerService {
    * @param id The UUID of the client
    */
   public removeClient(id: string): void {
+    const name = this.clients.get(id).player.name;
     this.clients.delete(id);
     this.entities.delete(id);
     this.eventEmitter.emit("entity.despawn", { id });
-    console.log(`Client ${id} left`);
+    this.logger.log(`Player ${name} left (${id})`);
   }
 
   /**
@@ -72,6 +77,7 @@ export class ServerService {
   public receiveHeartbeat(id: string): void {
     if (!this.clients.has(id)) return;
     this.clients.get(id).heartbeat();
+    this.logger.debug(`Heartbeat (${id})`);
   }
 
   /**
@@ -91,6 +97,7 @@ export class ServerService {
       x: player.x,
       y: player.y
     });
+    this.logger.verbose(`Spawned player ${player.name} (${player.id})`);
   }
 
   /**
@@ -108,6 +115,7 @@ export class ServerService {
       x: entity.x,
       y: entity.y
     });
+    this.logger.debug(`Spawned entity ${entityType} (${entity.id})`);
   }
 
   /**
@@ -123,6 +131,7 @@ export class ServerService {
     const entity = this.entities.get(id);
     entity.moveTo(x, y);
     this.eventEmitter.emit("entity.move", { id, x, y, speed: 0 });
+    this.logger.debug(`Moved ${entity.entityType} to (${x}, ${y}) (${id})`);
   }
 
   /**
@@ -144,6 +153,9 @@ export class ServerService {
     player.isRunning = isRunning;
     player.isAttacking = isAttacking;
     this.eventEmitter.emit("player.update", { id, facing, isRunning, isAttacking });
+    this.logger.debug(
+      `Updated player ${player.name} {facing: ${facing}, isRunning: ${isRunning}, isAttacking: ${isAttacking}} (${id})`
+    );
   }
 
   /**
@@ -158,6 +170,10 @@ export class ServerService {
     const player = this.clients.get(id).player;
     const target = this.entities.get(targetId);
     if (target && target instanceof Mob) target.damage(1);
+    // TODO: Add playerAttack event
+    this.logger.debug(
+      `Player ${player.name} attacked ${target.entityType} (${player.id} -> ${targetId})`
+    );
   }
 
   /**

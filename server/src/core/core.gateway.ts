@@ -1,11 +1,15 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
-  WebSocketGateway
+  WebSocketGateway,
+  WebSocketServer
 } from "@nestjs/websockets";
 import { WebSocket, WebSocketServer as WSServer } from "ws";
-import { UsePipes, ValidationPipe } from "@nestjs/common";
+import { Inject, LoggerService, UsePipes, ValidationPipe } from "@nestjs/common";
 import { CoreService } from "./core.service";
 import {
   AttackDto,
@@ -16,21 +20,31 @@ import {
   PlayerUpdateDto,
   SpawnDto
 } from "./core.gateway.dto";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 /** The core WebSocket gateway */
 @WebSocketGateway({ transports: ["websocket"] })
 @UsePipes(new ValidationPipe({ transform: true }))
-export class CoreGateway {
-  constructor(private coreService: CoreService) {}
+export class CoreGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() private readonly server: WSServer;
+
+  constructor(
+    private coreService: CoreService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService
+  ) {}
+
+  async afterInit() {
+    this.logger.log("CoreGateway initialized");
+  }
 
   /** Handle a new connection */
-  async handleConnection() {
-    console.log("New connection");
+  async handleConnection(socket: any) {
+    this.logger.log("Client connected");
   }
 
   /** Handle a disconnect */
   async handleDisconnect() {
-    console.log("Disconnected");
+    this.logger.log("Client disconnected");
   }
 
   /** Handle a heartbeat message */
