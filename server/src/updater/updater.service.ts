@@ -10,7 +10,7 @@ import { ServerService } from "../server/server.service";
 
 /** The updater service
  *
- * This service listens for server events and broadcasts updates to all connected clients
+ * This service listens for server events and broadcasts updates to all connected clients.
  */
 @Injectable()
 export class UpdaterService {

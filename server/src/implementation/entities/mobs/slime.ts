@@ -4,7 +4,10 @@ import { ServerService } from "server/server.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EntityMoveEvent } from "server/server.event";
 
-/** Slime mob */
+/** Slime mob 
+ * 
+ * Slime is a basic mob that moves randomly.
+*/
 export class Slime extends Mob {
   static readonly MAX_HP = 2;
   static readonly MAX_SPEED = 200;

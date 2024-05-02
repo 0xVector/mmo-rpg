@@ -22,7 +22,11 @@ import {
   SpawnDto
 } from "./core.gateway.dto";
 
-/** The core WebSocket gateway */
+/** The core WebSocket gateway
+ * 
+ * The core gateway handles the incoming websocket events and calls
+ * the appropriate services.
+*/
 @WebSocketGateway({ transports: ["websocket"] })
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CoreGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {

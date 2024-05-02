@@ -2,7 +2,11 @@ import { v4 as uuid } from "uuid";
 import { Entity, EntityType } from "../entity";
 import { EntityMoveEvent } from "server/server.event";
 
-/** Represents an abstract mob in the game */
+/** Represents an abstract mob in the game
+ * 
+ * Mob is any entity that has the properties of a creature - can be damaged, die
+ * and move on its own.
+ */
 export abstract class Mob extends Entity {
   public hp: number;
   public speed: number;

@@ -1,6 +1,9 @@
 import { Entity, EntityType } from "./entity";
 
-/* Represents a player entity in the game
+/** Represents a player entity in the game
+ * 
+ * Player is any player character spawned in the game. The player can be controlled
+ * by a connected client.
  *
  * @param id: A unique identifier (UUID) for the entity
  * @param name: The name of the player

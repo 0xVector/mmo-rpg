@@ -9,7 +9,11 @@ export enum EntityType {
   SPAWNER = "spawner"
 }
 
-/** Represents an entity in the game */
+/** Represents an entity in the game
+ * 
+ * An entity is the most basic server-side game object.
+ * It represents any object that has an id, type and coordinates.
+ */
 export abstract class Entity implements Tickable {
   /** The unique identifier (UUID) for the entity */
   public id: string;

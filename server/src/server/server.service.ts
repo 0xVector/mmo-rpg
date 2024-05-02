@@ -9,7 +9,15 @@ import { Mob } from "../implementation/entities/mobs/mob";
 import { Player } from "../implementation/entities/player";
 import { Spawner } from "../implementation/entities/spawner";
 
-/** The main server service */
+/** The main server service
+ * 
+ * The server service manages the server state. It is responsible for
+ * managing and updating connected clients, processes existing entities,
+ * and implements the server tick loop.
+ * 
+ * It is a subject to future refactiorization - it should be split up into
+ * client management and entity processing part.
+*/
 @Injectable()
 export class ServerService {
   static readonly MS_PER_TICK = 200;
