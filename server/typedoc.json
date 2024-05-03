@@ -1,0 +1,8 @@
+{
+    "entryPoints": ["./src"],
+    "entryPointStrategy": "expand",
+    "exclude": ["**/*+(index|.spec|.e2e).ts"],
+    "out": "../docs/server",
+    "name": "mmo-rpg server",
+    "includeVersion": true,
+}
