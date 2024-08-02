@@ -6,6 +6,9 @@ import { Attack } from "./attack";
 import { CustomEntity } from "../entity";
 
 export class PlayerOwn extends Player {
+  static readonly X_ATTACK_OFFSET = {"up": 0, "down": 0, "left": -40, "right": 40};
+  static readonly Y_ATTACK_OFFSET = {"up": -20, "down": 20, "left": 20, "right": 20};
+
   private lastXY: { x: number; y: number };
   private lastState: {
     facing: "up" | "down" | "left" | "right";
@@ -109,7 +112,8 @@ export class PlayerOwn extends Player {
     if (this.isAttacking) return;
     this.attack();
 
-    this.attackEntity = new Attack(this.pos.x, this.pos.y);
+    this.attackEntity = new Attack(this.pos.x + PlayerOwn.X_ATTACK_OFFSET[this.facing],
+      this.pos.y + PlayerOwn.Y_ATTACK_OFFSET[this.facing]);
     this.gameManager.addEntity(this.attackEntity);
 
     const collider = this.attackEntity.collider.get();
