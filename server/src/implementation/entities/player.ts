@@ -1,4 +1,5 @@
-import { Entity, EntityType } from "./entity";
+import { EntityType } from "./entity";
+import { LiveEntity } from "./live-entity";
 
 /** Represents a player entity in the game
  * 
@@ -13,14 +14,16 @@ import { Entity, EntityType } from "./entity";
  * @param isRunning: Whether the player is running
  * @param isAttacking: Whether the player is attacking
  */
-export class Player extends Entity {
+export class Player extends LiveEntity {
+  static readonly MAX_HP = 10;
+
   public name: string;
   public facing: "up" | "down" | "left" | "right" = "down";
   public isRunning: boolean = false;
   public isAttacking: boolean = false;
 
   constructor(id: string, name: string, x: number = 0, y: number = 0) {
-    super(EntityType.PLAYER, id, x, y);
+    super(EntityType.PLAYER, id, x, y, Player.MAX_HP);
     this.name = name;
   }
 }

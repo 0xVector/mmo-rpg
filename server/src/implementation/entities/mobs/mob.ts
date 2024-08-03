@@ -1,24 +1,15 @@
 import { v4 as uuid } from "uuid";
-import { Entity, EntityType } from "../entity";
+import { EntityType } from "../entity";
 import { EntityMoveEvent } from "server/server.event";
+import { LiveEntity } from "../live-entity";
 
 /** Represents an abstract mob in the game
  * 
  * Mob is any entity that has the properties of a creature - can be damaged, die
  * and move on its own.
  */
-export abstract class Mob extends Entity {
-  public hp: number;
+export abstract class Mob extends LiveEntity {
   public speed: number;
-
-  get isDead(): boolean {
-    return this.hp <= 0;
-  }
-
-  set isDead(dead: boolean) {
-    if (dead) this.hp = 0;
-    else this.hp = 1;
-  }
 
   /**
    * Create a new mob
@@ -29,8 +20,7 @@ export abstract class Mob extends Entity {
    * @param hp The health of the mob
    */
   constructor(type: EntityType, x: number, y: number, hp: number) {
-    super(type, uuid(), x, y);
-    this.hp = hp;
+    super(type, uuid(), x, y, hp);
     this.speed = 0;
   }
 
@@ -46,25 +36,5 @@ export abstract class Mob extends Entity {
     this.x = x;
     this.y = y;
     return { id: this.id, x, y, speed: this.speed };
-  }
-
-  /**
-   * Damage the mob
-   * 
-   * Can potentially kill the mob
-   * @param amount The amount of damage to deal
-   */
-  public damage(amount: number): void {
-    this.hp -= amount;
-    if (this.hp <= 0) {
-      this.kill();
-    }
-  }
-
-  /**
-   * Kill the mob
-   */
-  public kill(): void {
-    this.isDead = true;
   }
 }
