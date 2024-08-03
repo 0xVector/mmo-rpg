@@ -20,7 +20,7 @@ export class Player extends Entity {
   public isAttacking: boolean = false;
 
   constructor(id: string, name: string, x: number = 0, y: number = 0) {
-    super(id, EntityType.PLAYER, x, y);
+    super(EntityType.PLAYER, id, x, y);
     this.name = name;
   }
 }

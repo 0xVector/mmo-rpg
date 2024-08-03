@@ -16,8 +16,8 @@ export enum EntityType {
  */
 export abstract class Entity implements Tickable {
   /** The unique identifier (UUID) for the entity */
-  public id: string;
-  public entityType: EntityType;
+  public readonly id: string;
+  public readonly type: EntityType;
   public x: number;
   public y: number;
   /** Whether the entity is hidden from clients */
@@ -26,13 +26,13 @@ export abstract class Entity implements Tickable {
   /**
    * Create a new entity
    * @param id The unique identifier (UUID) for the entity
-   * @param entityType The type of entity
+   * @param type The type of entity
    * @param x The x-coordinate of the entity
    * @param y The y-coordinate of the entity
    */
-  constructor(id: string, entityType: EntityType, x: number, y: number) {
+  constructor(type: EntityType, id: string, x: number, y: number) {
+    this.type = type;
     this.id = id;
-    this.entityType = entityType;
     this.x = x;
     this.y = y;
     this.hidden = false;

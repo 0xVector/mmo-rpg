@@ -1,8 +1,8 @@
 import { Mob } from "./mob";
-import { EntityType } from "../entity";
 import { ServerService } from "server/server.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EntityMoveEvent } from "server/server.event";
+import { EntityType } from "../entity";
 
 /** Slime mob 
  * 
@@ -19,7 +19,7 @@ export class Slime extends Mob {
   constructor(x: number, y: number) {
     super(EntityType.SLIME, x, y, Slime.MAX_HP);
     this.lastMoveTick = 0;
-    this.speed = Math.random() * Slime.MAX_SPEED;
+    this.speed = Math.max(Math.random(), 0.3) * Slime.MAX_SPEED;
     this.lastMoveTick = 10;
   }
 
@@ -33,7 +33,7 @@ export class Slime extends Mob {
    */
   public override tick(tick: number, serverService: ServerService, eventEmitter: EventEmitter2): void {
     if (tick - this.lastMoveTick > Slime.JUMP_INTERVAL_TICKS) {
-      eventEmitter.emit("entity.move", this.movement());
+      eventEmitter.emit("entity.move", this.movement(serverService));
       this.lastMoveTick = tick;
     }
   }
@@ -42,9 +42,12 @@ export class Slime extends Mob {
    * Defines the movement of the slime
    * @returns An event representing the move
    */
-  public movement(): EntityMoveEvent {
-    const x = Math.floor((Math.random() < 0.5 ? 1 : -1) * Math.random() * Slime.MAX_MOVE_DISTANCE);
-    const y = Math.floor((Math.random() < 0.5 ? 1 : -1) * Math.random() * Slime.MAX_MOVE_DISTANCE);
+  public movement(serverService: ServerService): EntityMoveEvent {
+    const target = serverService.getClosestEntity(this.x, this.y, EntityType.PLAYER) ?? { x: 0, y: 0 };
+    const x = target.x - this.x;
+    const y = (target.y + 40) - this.y;
+    // const x = (target.x - this.x > 0 ? 1 : -1) * Math.min((target.x - this.y), Slime.MAX_MOVE_DISTANCE);
+    // const y = (target.y - this.y > 0 ? 1 : -1) * Math.min((target.y - this.y), Slime.MAX_MOVE_DISTANCE);
     return this.moveTo(this.x + x, this.y + y);
   }
 }

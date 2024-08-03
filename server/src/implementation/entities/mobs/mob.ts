@@ -23,13 +23,13 @@ export abstract class Mob extends Entity {
   /**
    * Create a new mob
    *
-   * @param entityType The type of mob
+   * @param type The type of mob
    * @param x The x-coordinate of the mob
    * @param y The y-coordinate of the mob
    * @param hp The health of the mob
    */
-  constructor(entityType: EntityType, x: number, y: number, hp: number) {
-    super(uuid(), entityType, x, y);
+  constructor(type: EntityType, x: number, y: number, hp: number) {
+    super(type, uuid(), x, y);
     this.hp = hp;
     this.speed = 0;
   }

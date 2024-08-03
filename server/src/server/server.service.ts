@@ -4,20 +4,19 @@ import { Interval } from "@nestjs/schedule";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Client } from "../implementation/client";
 import { Entity, EntityType } from "../implementation/entities/entity";
-import { createEntity } from "../implementation/entities/entity-factory";
 import { Mob } from "../implementation/entities/mobs/mob";
 import { Player } from "../implementation/entities/player";
 import { Spawner } from "../implementation/entities/spawner";
 
 /** The main server service
- * 
+ *
  * The server service manages the server state. It is responsible for
  * managing and updating connected clients, processes existing entities,
  * and implements the server tick loop.
- * 
+ *
  * It is a subject to future refactiorization - it should be split up into
  * client management and entity processing part.
-*/
+ */
 @Injectable()
 export class ServerService {
   static readonly MS_PER_TICK = 200;
@@ -110,20 +109,18 @@ export class ServerService {
 
   /**
    * Spawn an entity in the game
-   * @param entityType The type of entity to spawn
-   * @param x The x-coordinate to spawn the entity at
-   * @param y The y-coordinate to spawn the entity at
+   * 
+   * @param entity The entity to spawn
    */
-  public spawnEntity(entityType: EntityType, x: number, y: number): void {
-    const entity = createEntity(entityType, x, y);
+  public spawnEntity(entity: Entity): void {
     this.entities.set(entity.id, entity);
     this.eventEmitter.emit("entity.spawn", {
       id: entity.id,
-      entity: entity.entityType,
+      entity: entity.type,
       x: entity.x,
       y: entity.y
     });
-    this.logger.debug(`Spawned entity ${entityType} (${entity.id})`);
+    this.logger.debug(`Spawned entity ${entity.type} (${entity.id})`);
   }
 
   /**
@@ -139,7 +136,7 @@ export class ServerService {
     const entity = this.entities.get(id);
     entity.moveTo(x, y);
     this.eventEmitter.emit("entity.move", { id, x, y, speed: 0 });
-    this.logger.debug(`Moved ${entity.entityType} to (${x}, ${y}) (${id})`);
+    this.logger.debug(`Moved ${entity.type} to (${x}, ${y}) (${id})`);
   }
 
   /**
@@ -180,8 +177,24 @@ export class ServerService {
     if (target && target instanceof Mob) target.damage(1);
     // TODO: Add playerAttack event
     this.logger.debug(
-      `Player ${player.name} attacked ${target.entityType} (${player.id} -> ${targetId})`
+      `Player ${player.name} attacked ${target.type} (${player.id} -> ${targetId})`
     );
+  }
+
+  /**
+   * Find the closest entity to a point of a given type
+   * 
+   * @param x The x-coordinate to search from
+   * @param y The y-coordinate to search from
+   * @param type The type of entity to search for
+   * @returns The closest entity of the given type, or null if none are found
+   */
+  public getClosestEntity(x: number, y: number, type: EntityType): Entity | null {
+    return Array.from(this.entities.values()).sort((a, b) => {
+      return (
+        Math.sqrt((a.x - x) ** 2 + (a.y - y) ** 2) - Math.sqrt((b.x - x) ** 2 + (b.y - y) ** 2)
+      ); // TODO: some helper function for distance
+    }).find((entity) => entity.type === type) ?? null;
   }
 
   /**
@@ -238,7 +251,7 @@ export class ServerService {
       if (entity instanceof Mob && entity.isDead) return;
       this.sendTo(client, "entity-spawn", {
         id: entity.id,
-        entity: entity.entityType,
+        entity: entity.type,
         x: entity.x,
         y: entity.y
       });
