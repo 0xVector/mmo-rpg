@@ -1,8 +1,8 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { ServerService } from "server/server.service";
+import { WorldService } from "world/world.service";
 
 export interface Tickable {
 
   /** Called every tick */
-  tick(tickNumber: number, server: ServerService, eventEmitter: EventEmitter2): void;
+  tick(tickNumber: number, world: WorldService, eventEmitter: EventEmitter2): void;
 }

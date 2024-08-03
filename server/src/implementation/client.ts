@@ -1,5 +1,4 @@
 import { v4 as uuid } from "uuid";
-import { Player } from "./entities/player";
 
 /** Represents a client connected to the server */
 export class Client {
@@ -9,15 +8,16 @@ export class Client {
   public id: string;
   /** The time of the last heartbeat received from the client */
   public lastHeartbeat: number;
-  /** The player entity associated with the client */
-  public player: Player = null;
+  /** The name of the player */
+  public playerName: string
 
   /**
    * Create a new client
    * @param socket The WebSocket connection to the client
    */
-  constructor(socket: WebSocket) {
+  constructor(socket: WebSocket, playerName: string) {
     this.socket = socket;
+    this.playerName = playerName;
     this.id = uuid();
     this.lastHeartbeat = Date.now();
   }

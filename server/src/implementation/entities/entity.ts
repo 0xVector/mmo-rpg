@@ -1,7 +1,7 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Tickable } from "implementation/tickable";
 import { EntityMoveEvent } from "server/server.event";
-import { ServerService } from "server/server.service";
+import { WorldService } from "world/world.service";
 
 export enum EntityType {
   PLAYER = "player",
@@ -46,7 +46,7 @@ export abstract class Entity implements Tickable {
    * @param server A reference to the server
    * @param emitter A reference to the event emitter
    */
-  public tick(tick: number, server: ServerService, emitter: EventEmitter2): void {}
+  public tick(tick: number, world: WorldService, emitter: EventEmitter2): void {}
 
   /**
    * Instantly move the entity to a new position

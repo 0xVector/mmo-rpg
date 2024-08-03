@@ -7,12 +7,14 @@ import { AppController } from "./app.controller";
 import { CoreModule } from "./core/core.module";
 import { ServerModule } from "./server/server.module";
 import { UpdaterModule } from "./updater/updater.module";
+import { WorldModule } from './world/world.module';
 
 /** The root module of the application */
 @Module({
   imports: [
     CoreModule,
     ServerModule,
+    WorldModule,
     UpdaterModule,
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),

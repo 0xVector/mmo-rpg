@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PlayerUpdateDto } from "./core.gateway.dto";
 import { ServerService } from "../server/server.service";
+import { WorldService } from "world/world.service";
 
 /** The core service */
 @Injectable()
 export class CoreService {
-  constructor(private server: ServerService) {}
+  constructor(private server: ServerService, private world: WorldService) {}
 
   /**
    * Join a client and register them with the server
@@ -32,7 +33,7 @@ export class CoreService {
    * @param id The UUID of the client
    */
   public spawnPlayer(id: string): void {
-    this.server.spawnPlayer(id);
+    this.world.spawnPlayer(id);
   }
 
   /**
@@ -50,7 +51,7 @@ export class CoreService {
    * @param y The new y-coordinate
    */
   public movePlayer(id: string, x: number, y: number): void {
-    this.server.moveEntity(id, x, y);
+    this.world.moveEntity(id, x, y);
   }
 
   /**
@@ -58,7 +59,7 @@ export class CoreService {
    * @param data The new state of the player
    */
   public updatePlayer(data: PlayerUpdateDto): void {
-    this.server.updatePlayer(data.id, data.facing, data.isRunning, data.isAttacking);
+    this.world.updatePlayer(data.id, data.facing, data.isRunning, data.isAttacking);
   }
 
   /**
@@ -67,6 +68,6 @@ export class CoreService {
    * @param target The UUID of the target
    */
   public attack(id: string, target: string): void {
-    this.server.attack(id, target);
+    this.world.attack(id, target);
   }
 }

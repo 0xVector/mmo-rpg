@@ -1,12 +1,10 @@
-import { Inject, Injectable, LoggerService } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, LoggerService } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Interval } from "@nestjs/schedule";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Client } from "../implementation/client";
-import { Entity, EntityType } from "../implementation/entities/entity";
 import { Mob } from "../implementation/entities/mobs/mob";
-import { Player } from "../implementation/entities/player";
-import { Spawner } from "../implementation/entities/spawner";
+import { WorldService } from "world/world.service";
 
 /** The main server service
  *
@@ -19,29 +17,36 @@ import { Spawner } from "../implementation/entities/spawner";
  */
 @Injectable()
 export class ServerService {
-  static readonly MS_PER_TICK = 200;
   static readonly MS_PER_HEARTBEAT = 1000;
   static readonly MS_HEARTBEAT_TIMEOUT = 3000;
 
   private clients: Map<string, Client>;
-  private entities: Map<string, Entity>;
-  private tick: number;
-
-  /** The number of existing entities */
-  get entityCount(): number {
-    return this.entities.size;
-  }
 
   constructor(
+    @Inject(forwardRef(() => WorldService)) private worldService: WorldService,
     private eventEmitter: EventEmitter2,
     @Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
   ) {
     this.clients = new Map();
-    this.entities = new Map();
-    this.tick = 0;
+  }
 
-    const spawner = new Spawner(0, 0);
-    this.entities.set(spawner.id, spawner);
+  /**
+   * Check if an id belongs to a connected client
+   * 
+   * @returns Whether the id belongs to a connected client
+   */
+  public isClient(id: string): boolean {
+    return this.clients.has(id);
+  }
+
+  /**
+   * Get a client by their id
+   * 
+   * @param id Id of the client
+   * @returns The client with the given id
+   */
+  public getClient(id: string): Client {
+    return this.clients.get(id);
   }
 
   /**
@@ -53,10 +58,7 @@ export class ServerService {
    * @returns The UUID of the newly registered client
    */
   public registerClient(clientSocket: WebSocket, playerName: string): string {
-    const client = new Client(clientSocket);
-    const player = new Player(client.id, playerName);
-    client.player = player;
-
+    const client = new Client(clientSocket, playerName);
     this.clients.set(client.id, client);
     this.logger.log(`Player ${playerName} joined (${client.id})`);
     this.updateClient(client);
@@ -70,10 +72,9 @@ export class ServerService {
    * @param id The UUID of the client
    */
   public removeClient(id: string): void {
-    const name = this.clients.get(id).player.name;
+    const name = this.clients.get(id).playerName;
     this.clients.delete(id);
-    this.entities.delete(id);
-    this.eventEmitter.emit("entity.despawn", { id });
+    this.worldService.despawnEntity(id);
     this.logger.log(`Player ${name} left (${id})`);
   }
 
@@ -85,116 +86,6 @@ export class ServerService {
     if (!this.clients.has(id)) return;
     this.clients.get(id).heartbeat();
     this.logger.debug(`Heartbeat (${id})`);
-  }
-
-  /**
-   * Spawn a player in the game
-   *
-   * The client must be registered with the server before calling this method
-   * @param id The UUID of the client
-   */
-  public spawnPlayer(id: string): void {
-    if (!this.clients.has(id)) return;
-    const client = this.clients.get(id);
-    const player = client.player;
-    this.entities.set(player.id, player);
-    this.eventEmitter.emit("entity.spawn", {
-      id: player.id,
-      entity: EntityType.PLAYER,
-      x: player.x,
-      y: player.y
-    });
-    this.logger.verbose(`Spawned player ${player.name} (${player.id})`);
-  }
-
-  /**
-   * Spawn an entity in the game
-   * 
-   * @param entity The entity to spawn
-   */
-  public spawnEntity(entity: Entity): void {
-    this.entities.set(entity.id, entity);
-    this.eventEmitter.emit("entity.spawn", {
-      id: entity.id,
-      entity: entity.type,
-      x: entity.x,
-      y: entity.y
-    });
-    this.logger.debug(`Spawned entity ${entity.type} (${entity.id})`);
-  }
-
-  /**
-   * Instantly move an entity to a new position
-   *
-   * The entity must already exist in the game.
-   * @param id The UUID of the entity
-   * @param x The new x-coordinate
-   * @param y The new y-coordinate
-   */
-  public moveEntity(id: string, x: number, y: number): void {
-    if (!this.entities.has(id)) return;
-    const entity = this.entities.get(id);
-    entity.moveTo(x, y);
-    this.eventEmitter.emit("entity.move", { id, x, y, speed: 0 });
-    this.logger.debug(`Moved ${entity.type} to (${x}, ${y}) (${id})`);
-  }
-
-  /**
-   * Update the player's state
-   * @param id The UUID of the player
-   * @param facing The direction the player is facing
-   * @param isRunning Whether the player is running
-   * @param isAttacking Whether the player is attacking
-   */
-  public updatePlayer(
-    id: string,
-    facing: "up" | "down" | "left" | "right",
-    isRunning: boolean,
-    isAttacking: boolean
-  ): void {
-    if (!this.clients.has(id)) return;
-    const player = this.clients.get(id).player;
-    player.facing = facing;
-    player.isRunning = isRunning;
-    player.isAttacking = isAttacking;
-    this.eventEmitter.emit("player.update", { id, facing, isRunning, isAttacking });
-    this.logger.debug(
-      `Updated player ${player.name} {facing: ${facing}, isRunning: ${isRunning}, isAttacking: ${isAttacking}} (${id})`
-    );
-  }
-
-  /**
-   * Attack a target
-   *
-   * The attacker must be a player and the target must be a mob
-   * @param id The UUID of the attacker
-   * @param targetId The UUID of the target
-   */
-  public attack(id: string, targetId: string): void {
-    if (!this.clients.has(id)) return;
-    const player = this.clients.get(id).player;
-    const target = this.entities.get(targetId);
-    if (target && target instanceof Mob) target.damage(1);
-    // TODO: Add playerAttack event
-    this.logger.debug(
-      `Player ${player.name} attacked ${target.type} (${player.id} -> ${targetId})`
-    );
-  }
-
-  /**
-   * Find the closest entity to a point of a given type
-   * 
-   * @param x The x-coordinate to search from
-   * @param y The y-coordinate to search from
-   * @param type The type of entity to search for
-   * @returns The closest entity of the given type, or null if none are found
-   */
-  public getClosestEntity(x: number, y: number, type: EntityType): Entity | null {
-    return Array.from(this.entities.values()).sort((a, b) => {
-      return (
-        Math.sqrt((a.x - x) ** 2 + (a.y - y) ** 2) - Math.sqrt((b.x - x) ** 2 + (b.y - y) ** 2)
-      ); // TODO: some helper function for distance
-    }).find((entity) => entity.type === type) ?? null;
   }
 
   /**
@@ -218,15 +109,6 @@ export class ServerService {
     client.socket.send(JSON.stringify({ event, data }));
   }
 
-  @Interval(ServerService.MS_PER_TICK)
-  private processTick(): void {
-    this.tick++;
-    this.entities.forEach((entity) => {
-      entity.tick(this.tick, this, this.eventEmitter);
-    });
-    this.processDeaths();
-  }
-
   @Interval(ServerService.MS_PER_HEARTBEAT)
   private checkHeartbeats(): void {
     const now = Date.now();
@@ -245,7 +127,7 @@ export class ServerService {
   }
 
   private updateClient(client: Client): void {
-    this.entities.forEach((entity) => {
+    this.worldService.getEntities().forEach((entity) => {
       if (entity.id === client.id) return;
       if (entity.hidden) return;
       if (entity instanceof Mob && entity.isDead) return;
@@ -255,15 +137,6 @@ export class ServerService {
         x: entity.x,
         y: entity.y
       });
-    });
-  }
-
-  private processDeaths(): void {
-    this.entities.forEach((entity) => {
-      if (entity instanceof Mob && entity.isDead) {
-        this.entities.delete(entity.id);
-        this.eventEmitter.emit("entity.despawn", { id: entity.id });
-      }
     });
   }
 }

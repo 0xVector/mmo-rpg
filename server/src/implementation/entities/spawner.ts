@@ -1,7 +1,7 @@
 import { Entity, EntityType } from "./entity";
-import { ServerService } from "server/server.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Slime } from "./mobs/slime";
+import { WorldService } from "world/world.service";
 
 /** A simple spawner that spawns slimes 
  * 
@@ -22,10 +22,10 @@ export class Spawner extends Entity {
     this.hidden = true;
   }
 
-  public override tick(tick: number, server: ServerService, emitter: EventEmitter2): void {
-    if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && server.entityCount < 50) {
+  public override tick(tick: number, world: WorldService, emitter: EventEmitter2): void {
+    if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && world.entityCount < 50) {
       this.lastSpawnTick = tick;
-      server.spawnEntity(new Slime(this.x, this.y));
+      world.spawnEntity(new Slime(this.x, this.y));
     }
   }
 }
