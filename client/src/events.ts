@@ -24,7 +24,7 @@ export class EntityDespawnEvent extends Event {}
 export class EntityMoveEvent extends Event {
   x: number;
   y: number;
-  speed: number;
+  time: number;
 }
 
 export class PlayerUpdateEvent extends Event {

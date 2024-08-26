@@ -1,4 +1,4 @@
-import { CircleCollider, Collider, CollisionStartEvent, Engine, Keys, Vector } from "excalibur";
+import { Collider, CollisionStartEvent, Engine, Keys, Vector } from "excalibur";
 import { WSManager } from "../../../websockets";
 import { Player } from "./player";
 import { GameManager } from "../../../game-manager";

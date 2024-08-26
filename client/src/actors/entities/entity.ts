@@ -1,4 +1,4 @@
-import { Actor, ActorArgs, CollisionGroup, CollisionGroupManager } from "excalibur";
+import { Actor, ActorArgs, CollisionGroupManager, vec } from "excalibur";
 import { Spawnable } from "./interfaces/spawnable";
 
 export enum EntityType {
@@ -24,7 +24,8 @@ export abstract class CustomEntity extends Actor implements Spawnable {
     this.pos.y = y;
   }
 
-  public moveGradually(x: number, y: number, speed: number): void {
+  public moveOverTime(x: number, y: number, time: number): void {
+    const speed = this.pos.distance(vec(x, y)) / time;
     this.actions.moveTo(x, y, speed);
   }
 
