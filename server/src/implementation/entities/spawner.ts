@@ -9,6 +9,7 @@ import { WorldService } from "world/world.service";
 */
 export class Spawner extends Entity {
   static TICKS_PER_SPAWN: number = 20;
+  static SPAWNER_LIMIT: number = 5;
 
   private lastSpawnTick: number = 0;
 
@@ -23,7 +24,7 @@ export class Spawner extends Entity {
   }
 
   public override tick(tick: number, world: WorldService, emitter: EventEmitter2): void {
-    if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && world.entityCount < 50) {
+    if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && world.entityCount < Spawner.SPAWNER_LIMIT) {
       this.lastSpawnTick = tick;
       world.spawnEntity(new Slime(this.x, this.y));
     }
