@@ -23,20 +23,21 @@ export abstract class Mob extends LiveEntity {
    */
   constructor(type: EntityType, x: number, y: number, hp: number) {
     super(type, uuid(), x, y, hp);
-    this.speed = 0;
+    this.speed = 1;
   }
 
   /**
    * Move the mob to a new position
    *
-   * This overrides the default moveTo method in Entity and uses the mob's speed
+   * This overrides the default moveTo method in Entity and uses the mob's speed to calculate the time
    * @param x
    * @param y
    * @returns
    */
   public override moveTo(x: number, y: number): EntityMoveEvent {
+    const time = timeTo(this.x, this.y, x, y, this.speed);
     this.x = x;
     this.y = y;
-    return { id: this.id, x, y, time: timeTo(this.x, this.y, x, y, this.speed) };
+    return { id: this.id, x, y, time };
   }
 }
