@@ -19,9 +19,9 @@ export class EntitySpawnEvent extends EntityEvent {
   y: number;
 }
 
-export class EntityDespawnEvent extends EntityEvent {}
+export class EntityDespawnEvent extends Event {}
 
-export class EntityMoveEvent extends EntityEvent {
+export class EntityMoveEvent extends Event {
   x: number;
   y: number;
   speed: number;
