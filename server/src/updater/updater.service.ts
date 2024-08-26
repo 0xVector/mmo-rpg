@@ -39,7 +39,7 @@ export class UpdaterService {
       id: event.id,
       x: event.x,
       y: event.y,
-      speed: event.speed
+      time: event.time
     });
   }
 

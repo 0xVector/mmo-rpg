@@ -20,7 +20,7 @@ export class EntityDespawnEvent extends Event {}
 export class EntityMoveEvent extends Event {
     x: number
     y: number
-    speed: number
+    time: number  // Time in seconds for the move to complete
 }
 
 /** An event emitted when a player updates their state */

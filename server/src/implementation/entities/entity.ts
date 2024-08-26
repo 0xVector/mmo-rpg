@@ -57,6 +57,6 @@ export abstract class Entity implements Tickable {
   public moveTo(x: number, y: number): EntityMoveEvent {
     this.x = x;
     this.y = y;
-    return { id: this.id, x, y, speed: 0 };
+    return { id: this.id, x, y, time: 0 };
   }
 }

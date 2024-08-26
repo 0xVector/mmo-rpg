@@ -2,6 +2,7 @@ import { v4 as uuid } from "uuid";
 import { EntityType } from "../entity";
 import { EntityMoveEvent } from "updater/updater.event";
 import { LiveEntity } from "../live-entity";
+import { timeTo } from "utils/coordinates";
 
 /** Represents an abstract mob in the game
  * 
@@ -9,6 +10,7 @@ import { LiveEntity } from "../live-entity";
  * and move on its own.
  */
 export abstract class Mob extends LiveEntity {
+  /** The speed of the mob in m/s */
   public speed: number;
 
   /**
@@ -35,6 +37,6 @@ export abstract class Mob extends LiveEntity {
   public override moveTo(x: number, y: number): EntityMoveEvent {
     this.x = x;
     this.y = y;
-    return { id: this.id, x, y, speed: this.speed };
+    return { id: this.id, x, y, time: timeTo(this.x, this.y, x, y, this.speed) };
   }
 }
