@@ -1,6 +1,6 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Tickable } from "implementation/tickable";
-import { EntityMoveEvent } from "server/server.event";
+import { EntityMoveEvent } from "updater/updater.event";
 import { WorldService } from "world/world.service";
 
 export enum EntityType {

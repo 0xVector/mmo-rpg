@@ -1,6 +1,6 @@
 import { Mob } from "./mob";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { EntityMoveEvent } from "server/server.event";
+import { EntityMoveEvent } from "updater/updater.event";
 import { EntityType } from "../entity";
 import { WorldService } from "world/world.service";
 

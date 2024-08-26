@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { EntityType } from "../entity";
-import { EntityMoveEvent } from "server/server.event";
+import { EntityMoveEvent } from "updater/updater.event";
 import { LiveEntity } from "../live-entity";
 
 /** Represents an abstract mob in the game
