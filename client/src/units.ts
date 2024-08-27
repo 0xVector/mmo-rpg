@@ -10,10 +10,10 @@ export function pixelsToUnits(pixels: number): number {
 
 export function rescaleDataFromUnits(data: any) {
   if (data.x) data.x = unitsToPixels(data.x);
-  if (data.y) data.y = unitsToPixels(data.y);
+  if (data.y) data.y = -unitsToPixels(data.y);
 }
 
 export function rescaleDataFromPixels(data: any) {
   if (data.x) data.x = pixelsToUnits(data.x);
-  if (data.y) data.y = pixelsToUnits(data.y);
+  if (data.y) data.y = -pixelsToUnits(data.y);
 }
