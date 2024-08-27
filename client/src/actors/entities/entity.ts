@@ -31,6 +31,7 @@ export abstract class CustomEntity extends Actor implements Spawnable {
     }
     
     const speed = this.pos.distance(vec(x, y)) / time;
+    this.actions.clearActions();
     this.actions.moveTo(x, y, speed);
   }
 
