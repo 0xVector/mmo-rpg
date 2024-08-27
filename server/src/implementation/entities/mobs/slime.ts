@@ -3,7 +3,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EntityMoveEvent } from "updater/updater.event";
 import { EntityType } from "../entity";
 import { WorldService } from "world/world.service";
-import { projectDistance } from "utils/coordinates";
+import { distance, projectDistance } from "utils/coordinates";
 
 /** Slime mob
  *
@@ -40,8 +40,9 @@ export class Slime extends Mob {
   public move(time: number, world: WorldService): EntityMoveEvent {
     const target = world.getClosestEntity(this.x, this.y, EntityType.PLAYER) ?? this;
 
-    const distance = time * this.speed;
-    const { x, y } = projectDistance(this.x, this.y, target.x, target.y, distance);
+    const maxDist = Math.min(time * this.speed); // Maximum distance the slime can move in this move
+    const dist = Math.min(maxDist, distance(this.x, this.y, target.x, target.y)); // Limit the distance by the remaining distance to the target to avoid oscillations
+    const { x, y } = projectDistance(this.x, this.y, target.x, target.y, dist);
     return this.moveTo(x, y);
   }
 }
