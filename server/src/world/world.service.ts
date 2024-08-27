@@ -8,6 +8,7 @@ import { Spawner } from "implementation/entities/spawner";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { ServerService } from "server/server.service";
 import { LiveEntity } from "implementation/entities/live-entity";
+import { distance } from "utils/coordinates";
 
 /**
  * The world service
@@ -30,7 +31,7 @@ export class WorldService {
   constructor(
     @Inject(forwardRef(() => ServerService)) private serverService: ServerService,
     private eventEmitter: EventEmitter2,
-    @Inject(WINSTON_MODULE_NEST_PROVIDER) private logger: LoggerService
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) public logger: LoggerService
   ) {
     this.entities = new Map();
     this.tick = 0;
@@ -163,9 +164,7 @@ export class WorldService {
     return (
       Array.from(this.entities.values())
         .sort((a, b) => {
-          return (
-            Math.sqrt((a.x - x) ** 2 + (a.y - y) ** 2) - Math.sqrt((b.x - x) ** 2 + (b.y - y) ** 2)
-          ); // TODO: some helper function for distance
+          return distance(x, y, a.x, a.y) - distance(x, y, b.x, b.y);
         })
         .find((entity) => entity.type === type) ?? null
     );
