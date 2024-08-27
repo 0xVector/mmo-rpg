@@ -1,3 +1,5 @@
+import { rescaleDataFromPixels, rescaleDataFromUnits } from "./units";
+
 export class WSManager {
   private socket: WebSocket;
   private handlers: Map<string, Function> = new Map();
@@ -11,6 +13,7 @@ export class WSManager {
     this.socket.onmessage = (message) => {
       const {event, data} = JSON.parse(String(message.data));
       const handler = this.handlers.get(event) ?? (() => {});
+      rescaleDataFromUnits(data);
       handler(data);
     };
   }
@@ -24,6 +27,7 @@ export class WSManager {
   }
 
   public send(event: string, data: any): void {
+    rescaleDataFromPixels(data);
     this.socket.send(JSON.stringify({ event: event, data: data }));
   }
 

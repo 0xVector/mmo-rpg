@@ -13,6 +13,7 @@ import { CustomEntity } from "./actors/entities/entity";
 import { PlayerOwn } from "./actors/entities/player/player-own";
 import { createEntity } from "./actors/entities/entity-factory";
 import { Player } from "./actors/entities/player/player";
+import { unitsToPixels } from "./units";
 
 export class GameManager {
   private game: Engine;
@@ -87,8 +88,7 @@ export class GameManager {
   private handleEntityMove(data: EntityMoveEvent) {
     const entity = this.entities.get(data.id);
     if (entity && entity !== this.ownPlayer) {
-      if (data.speed === 0) entity.move(data.x, data.y);
-      else entity.moveGradually(data.x, data.y, data.speed);
+      entity.moveOverTime(data.x, data.y, data.time);
     }
   }
 
