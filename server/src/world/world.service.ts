@@ -105,7 +105,7 @@ export class WorldService {
     if (!this.entities.has(id)) return;
     const entity = this.entities.get(id);
     entity.moveTo(x, y);
-    this.eventEmitter.emit("entity.move", { id, x, y, speed: 0 });
+    this.eventEmitter.emit("entity.move", { id, x, y, time: 0 });
     this.logger.debug(`Moved ${entity.type} to (${x}, ${y}) (${id})`);
   }
 
