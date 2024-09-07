@@ -56,7 +56,7 @@ export class UpdaterService {
 
   @OnEvent("player.attack")
   playerAttacked(event: AttackEvent) {
-    this.server.broadcast("attack", {
+    this.server.broadcast("player-attack", {
       id: event.id
     });
   }
