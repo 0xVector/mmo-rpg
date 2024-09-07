@@ -4,6 +4,7 @@ import { EntityMoveEvent } from "updater/updater.event";
 import { EntityType } from "../entity";
 import { WorldService } from "world/world.service";
 import { distance, projectDistance } from "utils/coordinates";
+import { Direction } from "../creature";
 
 /** Slime mob
  *
@@ -27,6 +28,7 @@ export class Slime extends Mob {
    * @param eventEmitter A reference to the event emitter
    */
   public override tick(tick: number, world: WorldService, eventEmitter: EventEmitter2): void {
+    super.tick(tick, world, eventEmitter);
     eventEmitter.emit("entity.move", this.move(WorldService.MS_PER_TICK / 1000, world));
   }
 
@@ -39,10 +41,21 @@ export class Slime extends Mob {
    */
   public move(time: number, world: WorldService): EntityMoveEvent {
     const target = world.getClosestEntity(this.x, this.y, EntityType.PLAYER) ?? this;
+    this.isMoving = target != this;
 
     const maxDist = Math.min(time * this.speed); // Maximum distance the slime can move in this move
     const dist = Math.min(maxDist, distance(this.x, this.y, target.x, target.y)); // Limit the distance by the remaining distance to the target to avoid oscillations
     const { x, y } = projectDistance(this.x, this.y, target.x, target.y, dist);
     return this.moveTo(x, y);
+  }
+
+  /**
+   * Override the default getDirTo method for the horizontally moving slime
+   *
+   * @param x The x-coordinate of the target
+   * @returns The horizontal direction to the target
+   */
+  protected override getDirTo(x: number, _: number): Direction {
+    return x > this.x ? "right" : "left";
   }
 }

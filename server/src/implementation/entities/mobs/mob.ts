@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { EntityType } from "../entity";
 import { EntityMoveEvent } from "updater/updater.event";
-import { Creature } from "../creature";
+import { Creature, Direction } from "../creature";
 import { timeTo } from "utils/coordinates";
 
 /** Represents an abstract mob in the game
@@ -29,15 +29,33 @@ export abstract class Mob extends Creature {
   /**
    * Move the mob to a new position
    *
-   * This overrides the default moveTo method in Entity and uses the mob's speed to calculate the time
+   * This overrides the default moveTo method in Entity and uses the mob's speed to calculate the time,
+   * and it also changes the mob's direction based on the new position.
    * @param x
    * @param y
    * @returns
    */
   public override moveTo(x: number, y: number): EntityMoveEvent {
     const time = timeTo(this.x, this.y, x, y, this.speed);
+    this.dir = this.getDirTo(x, y);
+
     this.x = x;
     this.y = y;
     return { id: this.id, x, y, time };
+  }
+
+  /**
+   * Return the relative direction to a target from the mob
+   * 
+   * @param x The x-coordinate of the target
+   * @param y The y-coordinate of the target
+   * @returns Direction to the target
+   */
+  protected getDirTo(x: number, y: number): Direction {
+    const dx = x - this.x;
+    const dy = y - this.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? "right" : "left";
+    else return dy > 0 ? "up" : "down";
   }
 }

@@ -1,3 +1,5 @@
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { WorldService } from "world/world.service";
 import { LiveEntity } from "./live-entity";
 
 /** Represent an abstract creature in the game
@@ -14,6 +16,13 @@ export abstract class Creature extends LiveEntity {
     public isMoving: boolean = false;
     /** Whether the Creature is dashing */
     public isDashing: boolean = false;
+
+  /**
+   * Override the default Entity tick to emit updates
+   */
+    public override tick(tick: number, world: WorldService, emitter: EventEmitter2): void {
+        emitter.emit("entity.update", { id: this.id, dir: this.dir, isMoving: this.isMoving, isDashing: this.isDashing });
+    }
 }
 
 export type Direction = "up" | "down" | "left" | "right";
