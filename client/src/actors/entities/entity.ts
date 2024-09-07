@@ -50,6 +50,8 @@ export abstract class CustomEntity extends Actor implements Spawnable {
     this.pos.y = y;
     this.spawned = true;
   }
+
+  public attack(): void {}  // TODO: Implement attack method or make abstract
 }
 
 export type Direction = "up" | "down" | "left" | "right";

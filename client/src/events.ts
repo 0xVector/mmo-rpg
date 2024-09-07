@@ -33,4 +33,4 @@ export class EntityUpdateEvent extends Event {
   isDashing: boolean;
 }
 
-export class PlayerAttackEvent extends Event {}
+export class EntityAttackEvent extends Event {}
