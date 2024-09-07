@@ -1,4 +1,5 @@
 import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Direction } from 'implementation/entities/creature';
 
 class BaseDto {
     @IsString()
@@ -30,16 +31,18 @@ export class PlayerMoveDto extends BaseDto {
 
 export class PlayerUpdateDto extends BaseDto {
     @IsIn(["up", "down", "left", "right"])
-    facing: "up" | "down" | "left" | "right";
+    dir: Direction;
 
     @IsBoolean()
-    isRunning: boolean;
+    isMoving: boolean;
 
     @IsBoolean()
-    isAttacking: boolean;
+    isDashing: boolean;
 }
 
-export class AttackDto extends BaseDto {
+export class AttackDto extends BaseDto {}
+
+export class HitDto extends BaseDto {
     @IsString()
     @IsNotEmpty()
     targetId: string;

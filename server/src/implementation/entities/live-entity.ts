@@ -1,7 +1,6 @@
 import { Entity, EntityType } from "./entity";
 
-/**
- * Represents an entity that is live - has health and can die
+/** Represents an entity that is alive - has health and can die
  */
 export abstract class LiveEntity extends Entity {
   public hp: number;

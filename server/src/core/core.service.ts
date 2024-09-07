@@ -59,15 +59,23 @@ export class CoreService {
    * @param data The new state of the player
    */
   public updatePlayer(data: PlayerUpdateDto): void {
-    this.world.updatePlayer(data.id, data.facing, data.isRunning, data.isAttacking);
+    this.world.updatePlayer(data.id, data.dir, data.isMoving, data.isDashing);
   }
 
   /**
-   * Process an attack on a player
+   * Process an attack from a player
+   * @param id The UUID of the attacker
+   */
+  public attack(id: string): void {
+    this.world.processAttack(id);
+  }
+
+  /**
+   * Process a hit from a player
    * @param id The UUID of the attacker
    * @param target The UUID of the target
    */
-  public attack(id: string, target: string): void {
-    this.world.attack(id, target);
+  public hit(id: string, target: string): void {
+    this.world.hit(id, target);
   }
 }

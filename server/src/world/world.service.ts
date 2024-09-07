@@ -9,6 +9,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { ServerService } from "server/server.service";
 import { LiveEntity } from "implementation/entities/live-entity";
 import { distance } from "utils/coordinates";
+import { Direction } from "implementation/entities/creature";
 
 /**
  * The world service
@@ -113,43 +114,51 @@ export class WorldService {
    * Update the player's state
    * @param id The UUID of the player
    * @param facing The direction the player is facing
-   * @param isRunning Whether the player is running
-   * @param isAttacking Whether the player is attacking
+   * @param isMoving Whether the player is running
+   * @param isDashing Whether the player is dashing
    */
-  public updatePlayer(
-    id: string,
-    facing: "up" | "down" | "left" | "right",
-    isRunning: boolean,
-    isAttacking: boolean
-  ): void {
+  public updatePlayer(id: string, dir: Direction, isMoving: boolean, isDashing: boolean): void {
     if (!this.serverService.isClient(id)) return;
     const player = this.entities.get(id);
     if (!(player instanceof Player)) return;
 
-    player.facing = facing;
-    player.isRunning = isRunning;
-    player.isAttacking = isAttacking;
-    this.eventEmitter.emit("player.update", { id, facing, isRunning, isAttacking });
+    player.dir = dir;
+    player.isMoving = isMoving;
+    player.isDashing = isDashing;
+    this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing });
     this.logger.debug(
-      `Updated player ${player.name} {facing: ${facing}, isRunning: ${isRunning}, isAttacking: ${isAttacking}} (${id})`
+      `Updated player ${player.name} {dir: ${dir}, isMoving: ${isMoving}, isDashing: ${isDashing}} (${id})`
     );
   }
 
   /**
-   * Attack a target
+   * Hit a target
    *
    * @param fromId The UUID of the attacker
    * @param toId The UUID of the target
    */
-  public attack(fromId: string, toId: string): void {
+  public hit(fromId: string, toId: string): void {
     const from = this.entities.get(fromId);
     const to = this.entities.get(toId);
-    if (from && to && to instanceof LiveEntity) to.damage(1);
+    if (from && to && to instanceof LiveEntity) to.damage(1); // TODO: damage amount
     this.logger.debug(
-      `${from.type} ${from instanceof Player ? from.name : ""} attacked ${
+      `${from.type} ${from instanceof Player ? from.name : "Entity"} hit ${
         to.type
       } (${fromId} -> ${toId})`
     );
+  }
+
+  /**
+   * Process an attack from a player
+   * 
+   * @param id The UUID of the attacker
+   */
+  public processAttack(id: string): void {
+    const attacker = this.entities.get(id);
+    if (!(attacker instanceof Player)) return;  // Only player attacks (for now)
+    this.eventEmitter.emit("player.attack", { id });
+    this.logger.debug(`Player ${attacker.name} (${id}) attacked`);
+    // TODO: Implement attack validation
   }
 
   /**

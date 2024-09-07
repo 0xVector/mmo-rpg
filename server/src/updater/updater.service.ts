@@ -4,7 +4,8 @@ import {
   EntitySpawnEvent,
   EntityDespawnEvent,
   EntityMoveEvent,
-  PlayerUpdateEvent
+  EntityUpdateEvent,
+  AttackEvent
 } from "./updater.event";
 import { ServerService } from "../server/server.service";
 
@@ -43,13 +44,20 @@ export class UpdaterService {
     });
   }
 
-  @OnEvent("player.update")
-  playerUpdated(event: PlayerUpdateEvent) {
-    this.server.broadcast("player-update", {
+  @OnEvent("entity.update")
+  playerUpdated(event: EntityUpdateEvent) {
+    this.server.broadcast("entity-update", {
       id: event.id,
-      facing: event.facing,
-      isRunning: event.isRunning,
-      isAttacking: event.isAttacking
+      dir: event.dir,
+      isMoving: event.isMoving,
+      isDashing: event.isDashing
+    });
+  }
+
+  @OnEvent("player.attack")
+  playerAttacked(event: AttackEvent) {
+    this.server.broadcast("attack", {
+      id: event.id
     });
   }
 }

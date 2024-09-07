@@ -15,6 +15,7 @@ import { CoreService } from "./core.service";
 import {
   AttackDto,
   HeartbeatDto,
+  HitDto,
   JoinDto,
   LeaveDto,
   PlayerMoveDto,
@@ -97,7 +98,13 @@ export class CoreGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   /** Handle an attack message */
   @SubscribeMessage("attack")
-  handleAttack(@MessageBody() data: AttackDto) {
-    this.coreService.attack(data.id, data.targetId);
+  handleAttack(@MessageBody() data: AttackDto): void {
+    this.coreService.attack(data.id);
+  }
+
+  /** Handle a hit message */
+  @SubscribeMessage("hit")
+  handleHit(@MessageBody() data: HitDto): void {
+    this.coreService.hit(data.id, data.targetId);
   }
 }

@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { EntityType } from "../entity";
 import { EntityMoveEvent } from "updater/updater.event";
-import { LiveEntity } from "../live-entity";
+import { Creature } from "../creature";
 import { timeTo } from "utils/coordinates";
 
 /** Represents an abstract mob in the game
@@ -9,7 +9,7 @@ import { timeTo } from "utils/coordinates";
  * Mob is any entity that has the properties of a creature - can be damaged, die
  * and move on its own.
  */
-export abstract class Mob extends LiveEntity {
+export abstract class Mob extends Creature {
   /** The speed of the mob in m/s */
   public speed: number;
 
