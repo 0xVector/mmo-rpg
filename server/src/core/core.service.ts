@@ -76,6 +76,6 @@ export class CoreService {
    * @param target The UUID of the target
    */
   public hit(id: string, target: string): void {
-    this.world.hit(id, target);
+    this.world.damage(id, target);
   }
 }

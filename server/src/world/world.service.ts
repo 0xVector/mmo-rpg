@@ -137,12 +137,20 @@ export class WorldService {
    * @param fromId The UUID of the attacker
    * @param toId The UUID of the target
    */
-  public hit(fromId: string, toId: string): void {
+  public damage(fromId: string, toId: string): void {
     const from = this.entities.get(fromId);
     const to = this.entities.get(toId);
-    if (from && to && to instanceof LiveEntity) to.damage(1); // TODO: damage amount
+    const amount = 1; // TODO: damage amount
+    
+    if (from && to && to instanceof LiveEntity) to.damage(amount);
+    this.eventEmitter.emit("entity.damage", {
+      id: toId,
+      damage: amount,
+      sourceX: from.x,
+      sourceY: from.y
+    });
     this.logger.debug(
-      `${from.type} ${from instanceof Player ? from.name : "Entity"} hit ${
+      `${from.type} ${from instanceof Player ? from.name : "Entity"} damaged ${
         to.type
       } (${fromId} -> ${toId})`
     );
@@ -150,12 +158,12 @@ export class WorldService {
 
   /**
    * Process an attack from a player
-   * 
+   *
    * @param id The UUID of the attacker
    */
   public processAttack(id: string): void {
     const attacker = this.entities.get(id);
-    if (!(attacker instanceof Player)) return;  // Only player attacks (for now)
+    if (!(attacker instanceof Player)) return; // Only player attacks (for now)
     this.eventEmitter.emit("entity.attack", { id });
     this.logger.debug(`Player ${attacker.name} (${id}) attacked`);
     // TODO: Implement attack validation

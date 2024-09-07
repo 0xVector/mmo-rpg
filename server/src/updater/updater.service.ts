@@ -6,6 +6,7 @@ import {
   EntityMoveEvent,
   EntityUpdateEvent,
   EntityAttackEvent,
+  EntityDamageEvent,
 } from "./updater.event";
 import { ServerService } from "../server/server.service";
 
@@ -58,6 +59,16 @@ export class UpdaterService {
   entityAttacked(event: EntityAttackEvent) {
     this.server.broadcast("entity-attack", {
       id: event.id
+    });
+  }
+
+  @OnEvent("entity.damage")
+  entityDamaged(event: EntityDamageEvent) {
+    this.server.broadcast("entity-damage", {
+      id: event.id,
+      damage: event.damage,
+      sourceX: event.sourceX,
+      sourceY: event.sourceY
     });
   }
 }
