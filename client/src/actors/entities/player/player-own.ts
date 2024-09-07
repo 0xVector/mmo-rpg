@@ -3,17 +3,17 @@ import { WSManager } from "../../../websockets";
 import { Player } from "./player";
 import { GameManager } from "../../../game-manager";
 import { Attack } from "./attack";
-import { CustomEntity } from "../entity";
+import { CustomEntity, Direction } from "../entity";
 
 export class PlayerOwn extends Player {
-  static readonly X_ATTACK_OFFSET = {"up": 0, "down": 0, "left": -40, "right": 40};
-  static readonly Y_ATTACK_OFFSET = {"up": -20, "down": 20, "left": 20, "right": 20};
+  static readonly X_ATTACK_OFFSET = { up: 0, down: 0, left: -40, right: 40 };
+  static readonly Y_ATTACK_OFFSET = { up: -20, down: 20, left: 20, right: 20 };
 
   private lastXY: { x: number; y: number };
   private lastState: {
-    facing: "up" | "down" | "left" | "right";
-    isRunning: boolean;
-    isAttacking: boolean;
+    dir: Direction;
+    isMoving: boolean;
+    isDashing: boolean;
   };
   private attackEntity: Attack | null;
   private gameManager: GameManager;
@@ -21,7 +21,7 @@ export class PlayerOwn extends Player {
 
   constructor(netId: string, gameManager: GameManager, wsManager: WSManager) {
     super(netId);
-    this.lastState = { facing: "down", isRunning: false, isAttacking: false};
+    this.lastState = { dir: "down", isMoving: false, isDashing: false };
     this.attackEntity = null;
     this.gameManager = gameManager;
     this.wsManager = wsManager;
@@ -42,31 +42,30 @@ export class PlayerOwn extends Player {
     const key = engine.input.keyboard;
 
     if (key.wasPressed(Keys.Space)) {
-      this.doAttack();
-      // this.wsManager.send("attack", { id: this.netId });
+      this.tryAttack();
     }
 
     let targetVel = Vector.Zero;
     if (key.isHeld(Keys.A) || key.isHeld(Keys.D) || key.isHeld(Keys.W) || key.isHeld(Keys.S)) {
-      this.isRunning = true;
+      this.isMoving = true;
       if (key.isHeld(Keys.W)) {
-        this.facing = "up";
+        this.dir = "up";
         targetVel = targetVel.add(Vector.Up);
       }
       if (key.isHeld(Keys.S)) {
-        this.facing = "down";
+        this.dir = "down";
         targetVel = targetVel.add(Vector.Down);
       }
       if (key.isHeld(Keys.A)) {
-        this.facing = "left";
+        this.dir = "left";
         targetVel = targetVel.add(Vector.Left);
       }
       if (key.isHeld(Keys.D)) {
-        this.facing = "right";
+        this.dir = "right";
         targetVel = targetVel.add(Vector.Right);
       }
     } else {
-      this.isRunning = false;
+      this.isMoving = false;
     }
 
     targetVel.size = targetVel.size > 0 ? MAX_SPEED : 0;
@@ -75,6 +74,8 @@ export class PlayerOwn extends Player {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
+
+    // Send movement updates
     if (this.pos.x != this.lastXY.x || this.pos.y != this.lastXY.y) {
       this.wsManager.send("move", {
         id: this.netId,
@@ -82,20 +83,18 @@ export class PlayerOwn extends Player {
         y: this.pos.y
       });
     }
-    if (
-      this.facing != this.lastState.facing ||
-      this.isRunning != this.lastState.isRunning ||
-      this.isAttacking != this.lastState.isAttacking
-    ) {
+
+    // Send state updates
+    if (this.dir != this.lastState.dir || this.isMoving != this.lastState.isMoving) {
       this.wsManager.send("update", {
         id: this.netId,
-        facing: this.facing,
-        isRunning: this.isRunning,
-        isAttacking: this.isAttacking
+        dir: this.dir,
+        isMoving: this.isMoving,
+        isDashing: this.isDashing
       });
     }
     this.lastXY = { x: this.pos.x, y: this.pos.y };
-    this.lastState = { facing: this.facing, isRunning: this.isRunning, isAttacking: this.isAttacking};
+    this.lastState = { dir: this.dir, isMoving: this.isMoving, isDashing: this.isDashing };
   }
 
   public onPostUpdate(engine: Engine, delta: number): void {
@@ -108,12 +107,16 @@ export class PlayerOwn extends Player {
     }
   }
 
-  public doAttack(): void {
+  public tryAttack(): void {
     if (this.isAttacking) return;
     this.attack();
+    this.wsManager.send("attack", { id: this.netId });  // Send attack message (animation)
 
-    this.attackEntity = new Attack(this.pos.x + PlayerOwn.X_ATTACK_OFFSET[this.facing],
-      this.pos.y + PlayerOwn.Y_ATTACK_OFFSET[this.facing]);
+    // Process the attack locally and send the hits to the server
+    this.attackEntity = new Attack(
+      this.pos.x + PlayerOwn.X_ATTACK_OFFSET[this.dir],
+      this.pos.y + PlayerOwn.Y_ATTACK_OFFSET[this.dir]
+    );
     this.gameManager.addEntity(this.attackEntity);
 
     const collider = this.attackEntity.collider.get();
@@ -122,7 +125,7 @@ export class PlayerOwn extends Player {
 
       const target = e.other.owner as CustomEntity;
       if (target.netId === this.netId) return; // Don't hit yourself
-      this.wsManager.send("attack", { id: this.netId, targetId: target.netId });
+      this.wsManager.send("hit", { id: this.netId, targetId: target.netId });
     });
 
     // this.wsManager.send("attack", { id: this.netId });
