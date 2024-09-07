@@ -1,4 +1,4 @@
-import { EntityType } from "./actors/entities/entity";
+import { Direction, EntityType } from "./actors/entities/entity";
 
 abstract class Event {
   id: string;
@@ -27,8 +27,10 @@ export class EntityMoveEvent extends Event {
   time: number;
 }
 
-export class PlayerUpdateEvent extends Event {
-  facing: "up" | "down" | "left" | "right";
-  isRunning: boolean;
-  isAttacking: boolean;
+export class EntityUpdateEvent extends Event {
+  dir: Direction;
+  isMoving: boolean;
+  isDashing: boolean;
 }
+
+export class PlayerAttackEvent extends Event {}

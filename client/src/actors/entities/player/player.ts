@@ -5,8 +5,6 @@ import { CustomEntity } from "../entity";
 export class Player extends CustomEntity {
   static readonly MS_PER_ATTACK = 100*4;
 
-  public isRunning: boolean;
-  public facing: "down" | "up" | "right" | "left";
   protected msSinceLastAttack: number;
 
   get isAttacking() {
@@ -20,8 +18,6 @@ export class Player extends CustomEntity {
       collisionType: CollisionType.Active,
       collider: Shape.Box(10 * PLAYER_SIZE, 3 * PLAYER_SIZE, vec(0.5, 0.5), vec(0, 8 * PLAYER_SIZE))
     });
-    this.isRunning = false;
-    this.facing = "down";
     this.msSinceLastAttack = Player.MS_PER_ATTACK;
   }
 
@@ -48,9 +44,9 @@ export class Player extends CustomEntity {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
-    if (this.isAttacking) this.graphics.use(`attack-${this.facing}`);
-    else if (this.isRunning) this.graphics.use(`run-${this.facing}`);
-    else this.graphics.use(`idle-${this.facing}`);
+    if (this.isAttacking) this.graphics.use(`attack-${this.dir}`);
+    else if (this.isMoving) this.graphics.use(`run-${this.dir}`);
+    else this.graphics.use(`idle-${this.dir}`);
   }
 
   public onPostUpdate(engine: Engine<any>, delta: number): void {

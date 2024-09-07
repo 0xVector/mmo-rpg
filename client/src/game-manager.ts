@@ -4,16 +4,16 @@ import {
   EntityDespawnEvent,
   EntityMoveEvent,
   EntitySpawnEvent,
+  EntityUpdateEvent,
   HeartbeatEvent,
   JoinEvent,
   LeaveEvent,
-  PlayerUpdateEvent
+  PlayerAttackEvent
 } from "./events";
 import { CustomEntity } from "./actors/entities/entity";
 import { PlayerOwn } from "./actors/entities/player/player-own";
 import { createEntity } from "./actors/entities/entity-factory";
 import { Player } from "./actors/entities/player/player";
-import { unitsToPixels } from "./units";
 
 export class GameManager {
   private game: Engine;
@@ -40,6 +40,16 @@ export class GameManager {
     this.ws.send("spawn", { id: this.netId });
   }
 
+  public addEntity(entity: CustomEntity) {
+    this.entities.set(entity.netId, entity);
+    this.mainScene.add(entity);
+  }
+
+  public removeEntity(entity: CustomEntity) {
+    this.entities.delete(entity.netId);
+    this.mainScene.remove(entity);
+  }
+
   private registerHandlers() {
     this.ws.registerHandler("heartbeat", this.replyHeartbeat.bind(this));
     this.ws.registerHandler("join", this.handleJoin.bind(this));
@@ -47,7 +57,8 @@ export class GameManager {
     this.ws.registerHandler("entity-spawn", this.handleEntitySpawn.bind(this));
     this.ws.registerHandler("entity-despawn", this.handleEntityDespawn.bind(this));
     this.ws.registerHandler("entity-move", this.handleEntityMove.bind(this));
-    this.ws.registerHandler("player-update", this.handlePlayerUpdate.bind(this));
+    this.ws.registerHandler("entity-update", this.handleEntityUpdate.bind(this));
+    this.ws.registerHandler("player-attack", this.handlePlayerAttack.bind(this));
   }
 
   private replyHeartbeat(data: HeartbeatEvent) {
@@ -92,22 +103,17 @@ export class GameManager {
     }
   }
 
-  private handlePlayerUpdate(data: PlayerUpdateEvent) {
-    const player = this.entities.get(data.id) as Player;
-    if (player && player !== this.ownPlayer) {
-      player.facing = data.facing;
-      player.isRunning = data.isRunning;
-      if (data.isAttacking) player.attack();
+  private handleEntityUpdate(data: EntityUpdateEvent) {
+    const entity = this.entities.get(data.id);
+    if (entity && entity != this.ownPlayer) {
+      entity.dir = data.dir;
+      entity.isMoving = data.isMoving;
+      entity.isDashing = data.isDashing;
     }
   }
 
-  public addEntity(entity: CustomEntity) {
-    this.entities.set(entity.netId, entity);
-    this.mainScene.add(entity);
-  }
-
-  public removeEntity(entity: CustomEntity) {
-    this.entities.delete(entity.netId);
-    this.mainScene.remove(entity);
+  private handlePlayerAttack(data: PlayerAttackEvent) {
+    const player = this.entities.get(data.id) as Player;
+    if (player && player != this.ownPlayer) player.attack();
   }
 }
