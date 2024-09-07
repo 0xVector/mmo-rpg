@@ -156,7 +156,7 @@ export class WorldService {
   public processAttack(id: string): void {
     const attacker = this.entities.get(id);
     if (!(attacker instanceof Player)) return;  // Only player attacks (for now)
-    this.eventEmitter.emit("player.attack", { id });
+    this.eventEmitter.emit("entity.attack", { id });
     this.logger.debug(`Player ${attacker.name} (${id}) attacked`);
     // TODO: Implement attack validation
   }

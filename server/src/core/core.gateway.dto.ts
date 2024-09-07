@@ -40,7 +40,7 @@ export class PlayerUpdateDto extends BaseDto {
     isDashing: boolean;
 }
 
-export class AttackDto extends BaseDto {}
+export class PlayerAttackDto extends BaseDto {}
 
 export class HitDto extends BaseDto {
     @IsString()

@@ -13,7 +13,7 @@ import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { CoreService } from "./core.service";
 import {
-  AttackDto,
+  PlayerAttackDto,
   HeartbeatDto,
   HitDto,
   JoinDto,
@@ -98,7 +98,7 @@ export class CoreGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   /** Handle an attack message */
   @SubscribeMessage("attack")
-  handleAttack(@MessageBody() data: AttackDto): void {
+  handleAttack(@MessageBody() data: PlayerAttackDto): void {
     this.coreService.attack(data.id);
   }
 

@@ -32,4 +32,4 @@ export class EntityUpdateEvent extends Event {
 }
 
 /** An event emitted when an entity attacks */
-export class AttackEvent extends Event {}
+export class EntityAttackEvent extends Event {}
