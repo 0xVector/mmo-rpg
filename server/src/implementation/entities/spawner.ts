@@ -1,7 +1,8 @@
 import { Entity, EntityType } from "./entity";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Slime } from "./mobs/slime";
+import { Slime } from "./mobs/slime/slime";
 import { WorldService } from "world/world.service";
+import { SlimePurple } from "./mobs/slime/slime-purple";
 
 /** A simple spawner that spawns slimes 
  * 
@@ -26,7 +27,8 @@ export class Spawner extends Entity {
   public override tick(tick: number, world: WorldService, emitter: EventEmitter2): void {
     if (tick - this.lastSpawnTick >= Spawner.TICKS_PER_SPAWN && world.entityCount < Spawner.SPAWNER_LIMIT) {
       this.lastSpawnTick = tick;
-      world.spawnEntity(new Slime(this.x, this.y));
+      const slime = Math.random() < 0.8 ? new Slime(this.x, this.y) : new SlimePurple(this.x, this.y);
+      world.spawnEntity(slime);
     }
   }
 }

@@ -6,6 +6,7 @@ import { WorldService } from "world/world.service";
 export enum EntityType {
   PLAYER = "player",
   SLIME = "slime",
+  SLIME_PURPLE = "slimePurple",
   SPAWNER = "spawner"
 }
 
