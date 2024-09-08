@@ -200,7 +200,8 @@ export class WorldService {
     this.entities.forEach((entity) => {
       if (entity instanceof Mob && entity.isDead) {
         this.entities.delete(entity.id);
-        this.eventEmitter.emit("entity.despawn", { id: entity.id });
+        // this.eventEmitter.emit("entity.despawn", { id: entity.id });
+        // no longer needed, handled by the client when health reaches 0
       }
     });
   }
