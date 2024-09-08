@@ -8,6 +8,7 @@ export enum EntityType {
 }
 
 export abstract class CustomEntity extends Actor implements Spawnable {
+  public static MAX_HP = 1;
   private static entityCollisionGroup = CollisionGroupManager.create("entities");
 
   public netId: string;
@@ -15,6 +16,7 @@ export abstract class CustomEntity extends Actor implements Spawnable {
   public dir: Direction;
   public isMoving: boolean;
   public isDashing: boolean;
+  public hp: number = CustomEntity.MAX_HP;
 
   constructor(id: string, config: ActorArgs = {}) {
     if (!config.collisionGroup) config.collisionGroup = CustomEntity.entityCollisionGroup;
@@ -52,6 +54,11 @@ export abstract class CustomEntity extends Actor implements Spawnable {
   }
 
   public attack(): void {}  // TODO: Implement attack method or make abstract
+
+  public damage(damage: number) {
+    this.hp -= damage;
+    if (this.hp <= 0) this.despawn();
+  }
 }
 
 export type Direction = "up" | "down" | "left" | "right";

@@ -8,7 +8,8 @@ import {
   HeartbeatEvent,
   JoinEvent,
   LeaveEvent,
-  EntityAttackEvent
+  EntityAttackEvent,
+  EntityDamageEvent
 } from "./events";
 import { CustomEntity } from "./actors/entities/entity";
 import { PlayerOwn } from "./actors/entities/player/player-own";
@@ -58,6 +59,7 @@ export class GameManager {
     this.ws.registerHandler("entity-move", this.handleEntityMove.bind(this));
     this.ws.registerHandler("entity-update", this.handleEntityUpdate.bind(this));
     this.ws.registerHandler("entity-attack", this.handleEntityAttack.bind(this));
+    this.ws.registerHandler("entity-damage", this.handleEntityDamage.bind(this));
   }
 
   private replyHeartbeat(data: HeartbeatEvent) {
@@ -114,5 +116,10 @@ export class GameManager {
   private handleEntityAttack(data: EntityAttackEvent) {
     const entity = this.entities.get(data.id);
     if (entity && entity != this.ownPlayer) entity.attack();
+  }
+
+  private handleEntityDamage(data: EntityDamageEvent) {
+    const entity = this.entities.get(data.id);
+    if (entity) entity.damage(data.damage);
   }
 }

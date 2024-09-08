@@ -3,6 +3,7 @@ import { CustomEntity } from "../entity";
 import { SLIME_SIZE, animations } from "./slime-sprites";
 
 export class Slime extends CustomEntity {
+    public static override MAX_HP = 2;
 
     constructor(netId: string) {
         super(netId, {
@@ -11,6 +12,7 @@ export class Slime extends CustomEntity {
             collisionType: CollisionType.Active,
             collider: Shape.Box(10 * SLIME_SIZE, 3 * SLIME_SIZE, vec(0.5, 0.5), vec(0, 4 * SLIME_SIZE))
         });
+        this.hp = Slime.MAX_HP;
     }
 
     public onInitialize(engine: Engine): void {

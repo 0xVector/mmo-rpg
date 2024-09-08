@@ -34,3 +34,9 @@ export class EntityUpdateEvent extends Event {
 }
 
 export class EntityAttackEvent extends Event {}
+
+export class EntityDamageEvent extends Event {
+  damage: number;
+  sourceX: number;
+  sourceY: number;
+}
