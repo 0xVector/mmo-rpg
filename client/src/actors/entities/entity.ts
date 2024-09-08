@@ -4,6 +4,7 @@ import { Spawnable } from "./interfaces/spawnable";
 export enum EntityType {
   PLAYER = "player",
   SLIME = "slime",
+  SLIME_PURPLE = "slimePurple",
   ATTACK = "attack"
 }
 
