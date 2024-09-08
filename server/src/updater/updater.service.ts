@@ -51,7 +51,8 @@ export class UpdaterService {
       id: event.id,
       dir: event.dir,
       isMoving: event.isMoving,
-      isDashing: event.isDashing
+      isDashing: event.isDashing,
+      hp: event.hp
     });
   }
 

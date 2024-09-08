@@ -29,6 +29,7 @@ export class EntityUpdateEvent extends Event {
   dir: Direction;
   isMoving: boolean;
   isDashing: boolean;
+  hp: number;
 }
 
 /** An event emitted when an entity attacks */

@@ -125,7 +125,7 @@ export class WorldService {
     player.dir = dir;
     player.isMoving = isMoving;
     player.isDashing = isDashing;
-    this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing });
+    this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing, hp: player.hp });
     this.logger.debug(
       `Updated player ${player.name} {dir: ${dir}, isMoving: ${isMoving}, isDashing: ${isDashing}} (${id})`
     );
