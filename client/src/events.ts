@@ -31,6 +31,7 @@ export class EntityUpdateEvent extends Event {
   dir: Direction;
   isMoving: boolean;
   isDashing: boolean;
+  hp: number;
 }
 
 export class EntityAttackEvent extends Event {}

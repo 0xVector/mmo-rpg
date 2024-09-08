@@ -110,6 +110,7 @@ export class GameManager {
       entity.dir = data.dir;
       entity.isMoving = data.isMoving;
       entity.isDashing = data.isDashing;
+      entity.hp = data.hp;
     }
   }
 
