@@ -1,5 +1,5 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Tickable } from "implementation/tickable";
+import { Tickable } from "implementation/interfaces/tickable";
 import { EntityMoveEvent } from "updater/updater.event";
 import { WorldService } from "world/world.service";
 
