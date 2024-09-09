@@ -58,6 +58,7 @@ export abstract class CustomEntity extends Actor implements Spawnable {
 
   public damage(damage: number) {
     this.hp -= damage;
+    this.actions.blink(50, 50, 3);
     if (this.hp <= 0) this.despawn();
   }
 }
