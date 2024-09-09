@@ -14,10 +14,13 @@ import { Direction } from "../../creature";
 export abstract class AbstractSlime extends Mob {
   static readonly MAX_HP: number;
   static readonly MAX_SPEED: number;
-  protected readonly ATTACK_DISTANCE: number;
-  protected readonly ATTACK_COOLDOWN: number = 1;  // in seconds
 
-  protected lastAttackAt: number = 0;  // The last tick the slime attacked
+  protected readonly DAMAGE: number;
+  protected readonly ATTACK_DISTANCE: number;
+  protected readonly ATTACK_COOLDOWN: number = 1; // in seconds
+  protected readonly ATTACK_HIT_DELAY: number = 0.4; // in seconds
+
+  protected lastAttackAt: number = 0; // The last tick the slime attacked
 
   constructor(type: EntityType, x: number, y: number, hp: number, speed: number) {
     super(type, x, y, hp);
@@ -35,10 +38,7 @@ export abstract class AbstractSlime extends Mob {
   public override tick(tick: number, world: WorldService, eventEmitter: EventEmitter2): void {
     super.tick(tick, world, eventEmitter);
     eventEmitter.emit("entity.move", this.move(WorldService.MS_PER_TICK / 1000, world));
-    
-    // Attack
-    const attack = this.tryAttack(tick, world);
-    if (attack) eventEmitter.emit("entity.attack", attack);
+    this.tryAttack(tick, world, eventEmitter);
   }
 
   /**
@@ -63,19 +63,27 @@ export abstract class AbstractSlime extends Mob {
 
   /**
    * Attempt to attack the nearest player
-   * 
+   *
    * @param tick The current game tick
    * @param world A reference to the world service
    * @returns An event representing the attack, or null if the slime is not attacking
    */
-  public tryAttack(tick: number, world: WorldService): EntityAttackEvent | null {
-    if (this.isMoving) return null;
-    if ((tick - this.lastAttackAt)*WorldService.MS_PER_TICK/1000 < this.ATTACK_COOLDOWN) return null;
+  public tryAttack(tick: number, world: WorldService, eventEmitter: EventEmitter2): void {
+    if (this.isMoving) return;
+    if (((tick - this.lastAttackAt) * WorldService.MS_PER_TICK) / 1000 < this.ATTACK_COOLDOWN)
+      return;
 
     const target = world.getClosestEntity(this.x, this.y, EntityType.PLAYER);
     if (target && distance(this.x, this.y, target.x, target.y) <= this.ATTACK_DISTANCE) {
       this.lastAttackAt = tick;
-      return { id: this.id };
+      eventEmitter.emit("entity.attack", { id: this.id });
+      setTimeout(() =>
+      eventEmitter.emit("entity.damage", {
+        id: target.id,
+        damage: this.DAMAGE,
+        sourceX: this.x,
+        sourceY: this.y
+      }), this.ATTACK_HIT_DELAY * 1000);
     }
     return null;
   }
