@@ -10,7 +10,11 @@ import { AbstractSlime } from "./abstract-slime";
 export class SlimePurple extends AbstractSlime {
   static override readonly MAX_HP = 4;
   static override readonly MAX_SPEED = 4;
+  
+  override readonly DAMAGE = 2;
   override readonly ATTACK_DISTANCE = 0.5;
+  override readonly ATTACK_COOLDOWN = 1;
+  override readonly ATTACK_HIT_DELAY = 0.4;
 
   constructor(x: number, y: number) {
     super(EntityType.SLIME_PURPLE, x, y, SlimePurple.MAX_HP, SlimePurple.MAX_SPEED);

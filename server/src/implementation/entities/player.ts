@@ -1,3 +1,4 @@
+import { IHasDamage } from "implementation/interfaces/has-damage";
 import { Creature } from "./creature";
 import { EntityType } from "./entity";
 
@@ -11,9 +12,10 @@ import { EntityType } from "./entity";
  * @param x: The x-coordinate of the player's position
  * @param y: The y-coordinate of the player's position
  */
-export class Player extends Creature {
+export class Player extends Creature implements IHasDamage {
   static readonly MAX_HP = 10;
 
+  public readonly DAMAGE = 1;
   public name: string;
 
   constructor(id: string, name: string, x: number = 0, y: number = 0) {

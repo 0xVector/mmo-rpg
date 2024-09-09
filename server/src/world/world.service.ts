@@ -2,14 +2,14 @@ import { forwardRef, Inject, Injectable, LoggerService } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Interval } from "@nestjs/schedule";
 import { Entity, EntityType } from "implementation/entities/entity";
-import { Mob } from "implementation/entities/mobs/mob";
 import { Player } from "implementation/entities/player";
 import { Spawner } from "implementation/entities/spawner";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { ServerService } from "server/server.service";
 import { LiveEntity } from "implementation/entities/live-entity";
 import { distance } from "utils/coordinates";
-import { Direction } from "implementation/entities/creature";
+import { Creature, Direction } from "implementation/entities/creature";
+import { isIHasDamage } from "implementation/interfaces/has-damage";
 
 /**
  * The world service
@@ -140,20 +140,23 @@ export class WorldService {
   public damage(fromId: string, toId: string): void {
     const from = this.entities.get(fromId);
     const to = this.entities.get(toId);
-    const amount = 1; // TODO: damage amount
-    
-    if (from && to && to instanceof LiveEntity) to.damage(amount);
-    this.eventEmitter.emit("entity.damage", {
-      id: toId,
-      damage: amount,
-      sourceX: from.x,
-      sourceY: from.y
-    });
-    this.logger.debug(
-      `${from.type} ${from instanceof Player ? from.name : "Entity"} damaged ${
-        to.type
-      } (${fromId} -> ${toId})`
-    );
+    const amount = isIHasDamage(from) ? from.DAMAGE : 0;
+
+    if (from && to && to instanceof LiveEntity) {
+      to.damage(amount);
+      this.eventEmitter.emit("entity.damage", {
+        id: toId,
+        damage: amount,
+        sourceX: from.x,
+        sourceY: from.y
+      });
+      
+      this.logger.debug(
+        `${from.type} ${from instanceof Player ? from.name : "Entity"} damaged ${
+          to.type
+        } (${fromId} -> ${toId})`
+      );
+    }
   }
 
   /**
@@ -198,7 +201,7 @@ export class WorldService {
 
   private processDeaths(): void {
     this.entities.forEach((entity) => {
-      if (entity instanceof Mob && entity.isDead) {
+      if (entity instanceof Creature && entity.isDead) {
         this.entities.delete(entity.id);
         // this.eventEmitter.emit("entity.despawn", { id: entity.id });
         // no longer needed, handled by the client when health reaches 0

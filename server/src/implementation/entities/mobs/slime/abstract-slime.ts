@@ -1,21 +1,23 @@
 import { Mob } from "../mob";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { EntityAttackEvent, EntityMoveEvent } from "updater/updater.event";
+import { EntityMoveEvent } from "updater/updater.event";
 import { EntityType } from "../../entity";
 import { WorldService } from "world/world.service";
 import { distance, projectDistance } from "utils/coordinates";
 import { Direction } from "../../creature";
+import { IHasDamage } from "implementation/interfaces/has-damage";
 
 /**
  * Represents an abstract slime mob
  *
  * Slime is a basic mob that follows the player
  */
-export abstract class AbstractSlime extends Mob {
+export abstract class AbstractSlime extends Mob implements IHasDamage {
   static readonly MAX_HP: number;
   static readonly MAX_SPEED: number;
 
-  protected readonly DAMAGE: number;
+  public readonly DAMAGE: number;
+
   protected readonly ATTACK_DISTANCE: number;
   protected readonly ATTACK_COOLDOWN: number = 1; // in seconds
   protected readonly ATTACK_HIT_DELAY: number = 0.4; // in seconds
@@ -77,13 +79,7 @@ export abstract class AbstractSlime extends Mob {
     if (target && distance(this.x, this.y, target.x, target.y) <= this.ATTACK_DISTANCE) {
       this.lastAttackAt = tick;
       eventEmitter.emit("entity.attack", { id: this.id });
-      setTimeout(() =>
-      eventEmitter.emit("entity.damage", {
-        id: target.id,
-        damage: this.DAMAGE,
-        sourceX: this.x,
-        sourceY: this.y
-      }), this.ATTACK_HIT_DELAY * 1000);
+      setTimeout(() => world.damage(this.id, target.id), this.ATTACK_HIT_DELAY * 1000);
     }
     return null;
   }
