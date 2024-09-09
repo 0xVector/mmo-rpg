@@ -4,6 +4,7 @@ import { CustomEntity } from "../entity";
 
 export class Player extends CustomEntity {
   static readonly MS_PER_ATTACK = 100*4;
+  public static override MAX_HP = 10;
 
   protected msSinceLastAttack: number;
 
@@ -19,6 +20,7 @@ export class Player extends CustomEntity {
       collider: Shape.Box(10 * PLAYER_SIZE, 3 * PLAYER_SIZE, vec(0.5, 0.5), vec(0, 8 * PLAYER_SIZE))
     });
     this.msSinceLastAttack = Player.MS_PER_ATTACK;
+    this.hp = Player.MAX_HP;
   }
 
   public onInitialize(engine: Engine) {
