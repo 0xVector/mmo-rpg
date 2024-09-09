@@ -3,5 +3,5 @@ export interface IHasDamage {
 }
 
 export function isIHasDamage(obj: any): obj is IHasDamage {
-    return obj.DAMAGE !== undefined;
+    return obj && obj.DAMAGE !== undefined;
 }
