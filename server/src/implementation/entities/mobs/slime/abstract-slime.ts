@@ -14,6 +14,7 @@ import { Direction } from "../../creature";
 export abstract class AbstractSlime extends Mob {
   static readonly MAX_HP: number;
   static readonly MAX_SPEED: number;
+  readonly ATTACK_DISTANCE: number;
 
   constructor(type: EntityType, x: number, y: number, hp: number, speed: number) {
     super(type, x, y, hp);
@@ -41,12 +42,15 @@ export abstract class AbstractSlime extends Mob {
    * @returns An event representing the move
    */
   public move(time: number, world: WorldService): EntityMoveEvent {
-    const target = world.getClosestEntity(this.x, this.y, EntityType.PLAYER) ?? this;
+    let target = world.getClosestEntity(this.x, this.y, EntityType.PLAYER) ?? this;
+    const dist = distance(this.x, this.y, target.x, target.y);
+    if (dist <= this.ATTACK_DISTANCE) target = this;  // If close enough for attack, don't move closer
+    
     this.isMoving = target != this;
 
     const maxDist = Math.min(time * this.speed); // Maximum distance the slime can move in this move
-    const dist = Math.min(maxDist, distance(this.x, this.y, target.x, target.y)); // Limit the distance by the remaining distance to the target to avoid oscillations
-    const { x, y } = projectDistance(this.x, this.y, target.x, target.y, dist);
+    const useDist = Math.min(maxDist, dist); // Limit the distance by the remaining distance to the target to avoid oscillations
+    const { x, y } = projectDistance(this.x, this.y, target.x, target.y, useDist);
     return this.moveTo(x, y);
   }
 
