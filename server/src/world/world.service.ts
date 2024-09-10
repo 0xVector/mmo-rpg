@@ -125,7 +125,7 @@ export class WorldService {
     player.dir = dir;
     player.isMoving = isMoving;
     player.isDashing = isDashing;
-    this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing, hp: player.hp });
+    this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing, hp: player.hp, score: player.score });
     this.logger.debug(
       `Updated player ${player.name} {dir: ${dir}, isMoving: ${isMoving}, isDashing: ${isDashing}} (${id})`
     );
@@ -144,6 +144,8 @@ export class WorldService {
 
     if (from && to && to instanceof LiveEntity) {
       to.damage(amount);
+      if (to.isDead && from instanceof Player) from.score++;
+
       this.eventEmitter.emit("entity.damage", {
         id: toId,
         damage: amount,
@@ -169,7 +171,6 @@ export class WorldService {
     if (!(attacker instanceof Player)) return; // Only player attacks (for now)
     this.eventEmitter.emit("entity.attack", { id });
     this.logger.debug(`Player ${attacker.name} (${id}) attacked`);
-    // TODO: Implement attack validation
   }
 
   /**

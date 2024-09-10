@@ -16,6 +16,8 @@ export abstract class Creature extends LiveEntity {
   public isMoving: boolean = false;
   /** Whether the Creature is dashing */
   public isDashing: boolean = false;
+  /** The score of the Creature */
+  public score: number = 0;
 
   /**
    * Override the default Entity tick to emit updates
@@ -26,7 +28,8 @@ export abstract class Creature extends LiveEntity {
       dir: this.dir,
       isMoving: this.isMoving,
       isDashing: this.isDashing,
-      hp: this.hp
+      hp: this.hp,
+      score: this.score
     });
   }
 }

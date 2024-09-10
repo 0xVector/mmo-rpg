@@ -52,7 +52,8 @@ export class UpdaterService {
       dir: event.dir,
       isMoving: event.isMoving,
       isDashing: event.isDashing,
-      hp: event.hp
+      hp: event.hp,
+      score: event.score
     });
   }
 

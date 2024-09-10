@@ -30,6 +30,7 @@ export class EntityUpdateEvent extends Event {
   isMoving: boolean;
   isDashing: boolean;
   hp: number;
+  score: number;
 }
 
 /** An event emitted when an entity attacks */
