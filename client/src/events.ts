@@ -32,6 +32,7 @@ export class EntityUpdateEvent extends Event {
   isMoving: boolean;
   isDashing: boolean;
   hp: number;
+  score: number;
 }
 
 export class EntityAttackEvent extends Event {}

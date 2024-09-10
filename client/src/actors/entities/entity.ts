@@ -18,6 +18,7 @@ export abstract class CustomEntity extends Actor implements Spawnable {
   public isMoving: boolean;
   public isDashing: boolean;
   public hp: number = CustomEntity.MAX_HP;
+  public score: number = 0;
 
   constructor(id: string, config: ActorArgs = {}) {
     if (!config.collisionGroup) config.collisionGroup = CustomEntity.entityCollisionGroup;

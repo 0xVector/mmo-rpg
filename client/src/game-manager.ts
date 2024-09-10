@@ -111,6 +111,7 @@ export class GameManager {
       entity.isMoving = data.isMoving;
       entity.isDashing = data.isDashing;
       entity.hp = data.hp;
+      entity.score = data.score;
     }
   }
 
