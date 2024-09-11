@@ -127,7 +127,7 @@ export class WorldService {
     player.isDashing = isDashing;
     this.eventEmitter.emit("entity.update", { id, dir, isMoving, isDashing, hp: player.hp, score: player.score });
     this.logger.debug(
-      `Updated player ${player.name} {dir: ${dir}, isMoving: ${isMoving}, isDashing: ${isDashing}} (${id})`
+      `Updated player ${player.name} {dir: ${dir}, isMoving: ${isMoving}, isDashing: ${isDashing}, score: ${player.score}} (${id})`
     );
   }
 
@@ -154,7 +154,7 @@ export class WorldService {
       });
       
       this.logger.debug(
-        `${from.type} ${from instanceof Player ? from.name : "Entity"} damaged ${
+        `${from.type} ${from instanceof Player ? from.name + from.score : ""} damaged ${
           to.type
         } (${fromId} -> ${toId})`
       );
@@ -203,6 +203,7 @@ export class WorldService {
   private processDeaths(): void {
     this.entities.forEach((entity) => {
       if (entity instanceof Creature && entity.isDead) {
+        this.logger.debug(`${entity.type} ${entity.id} died`);
         this.entities.delete(entity.id);
         // this.eventEmitter.emit("entity.despawn", { id: entity.id });
         // no longer needed, handled by the client when health reaches 0
